@@ -36,7 +36,7 @@ export class HelpModal extends LitElement {
     return html`
       <o-modal
         id="helpModal"
-        title="Instructions"
+        modal-title="Instructions"
         translationKey="main.instructions"
       >
         <div class="flex flex-col items-center">

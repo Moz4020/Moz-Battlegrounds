@@ -180,15 +180,6 @@ export class UserSettingModal extends LitElement {
     }
   }
 
-  private toggleTerritoryPatterns(e: CustomEvent<{ checked: boolean }>) {
-    const enabled = e.detail?.checked;
-    if (typeof enabled !== "boolean") return;
-
-    this.userSettings.set("settings.territoryPatterns", enabled);
-
-    console.log("🏳️ Territory Patterns:", enabled ? "ON" : "OFF");
-  }
-
   private togglePerformanceOverlay(e: CustomEvent<{ checked: boolean }>) {
     const enabled = e.detail?.checked;
     if (typeof enabled !== "boolean") return;
@@ -226,15 +217,15 @@ export class UserSettingModal extends LitElement {
 
   render() {
     return html`
-      <o-modal title="${translateText("user_setting.title")}">
+      <o-modal modal-title="${translateText("user_setting.title")}">
         <div class="modal-overlay">
           <div class="modal-content user-setting-modal">
             <div class="flex mb-4 w-full justify-center">
               <button
                 class="w-1/2 text-center px-3 py-1 rounded-l 
       ${this.settingsMode === "basic"
-                  ? "bg-white/10 text-white"
-                  : "bg-transparent text-gray-400"}"
+        ? "bg-white/10 text-white"
+        : "bg-transparent text-gray-400"}"
                 @click=${() => (this.settingsMode = "basic")}
               >
                 ${translateText("user_setting.tab_basic")}
@@ -242,8 +233,8 @@ export class UserSettingModal extends LitElement {
               <button
                 class="w-1/2 text-center px-3 py-1 rounded-r 
       ${this.settingsMode === "keybinds"
-                  ? "bg-white/10 text-white"
-                  : "bg-transparent text-gray-400"}"
+        ? "bg-white/10 text-white"
+        : "bg-transparent text-gray-400"}"
                 @click=${() => (this.settingsMode = "keybinds")}
               >
                 ${translateText("user_setting.tab_keybinds")}
@@ -252,8 +243,8 @@ export class UserSettingModal extends LitElement {
 
             <div class="settings-list">
               ${this.settingsMode === "basic"
-                ? this.renderBasicSettings()
-                : this.renderKeybindSettings()}
+        ? this.renderBasicSettings()
+        : this.renderKeybindSettings()}
             </div>
           </div>
         </div>
@@ -270,7 +261,7 @@ export class UserSettingModal extends LitElement {
         id="dark-mode-toggle"
         .checked=${this.userSettings.darkMode()}
         @change=${(e: CustomEvent<{ checked: boolean }>) =>
-          this.toggleDarkMode(e)}
+        this.toggleDarkMode(e)}
       ></setting-toggle>
 
       <!-- 😊 Emojis -->
@@ -336,15 +327,6 @@ export class UserSettingModal extends LitElement {
         @change=${this.toggleLobbyIdVisibility}
       ></setting-toggle>
 
-      <!-- 🏳️ Territory Patterns -->
-      <setting-toggle
-        label="${translateText("user_setting.territory_patterns_label")}"
-        description="${translateText("user_setting.territory_patterns_desc")}"
-        id="territory-patterns-toggle"
-        .checked=${this.userSettings.territoryPatterns()}
-        @change=${this.toggleTerritoryPatterns}
-      ></setting-toggle>
-
       <!-- 📱 Performance Overlay -->
       <setting-toggle
         label="${translateText("user_setting.performance_overlay_label")}"
@@ -361,7 +343,7 @@ export class UserSettingModal extends LitElement {
         min="1"
         max="100"
         .value=${Number(localStorage.getItem("settings.attackRatio") ?? "0.2") *
-        100}
+      100}
         @change=${this.sliderAttackRatio}
       ></setting-slider>
 
@@ -369,42 +351,42 @@ export class UserSettingModal extends LitElement {
         ? html`
             <setting-slider
               label="${translateText(
-                "user_setting.easter_writing_speed_label",
-              )}"
+          "user_setting.easter_writing_speed_label",
+        )}"
               description="${translateText(
-                "user_setting.easter_writing_speed_desc",
-              )}"
+          "user_setting.easter_writing_speed_desc",
+        )}"
               min="0"
               max="100"
               value="40"
               easter="true"
               @change=${(e: CustomEvent) => {
-                const value = e.detail?.value;
-                if (value !== undefined) {
-                  console.log("Changed:", value);
-                } else {
-                  console.warn("Slider event missing detail.value", e);
-                }
-              }}
+            const value = e.detail?.value;
+            if (value !== undefined) {
+              console.log("Changed:", value);
+            } else {
+              console.warn("Slider event missing detail.value", e);
+            }
+          }}
             ></setting-slider>
 
             <setting-number
               label="${translateText("user_setting.easter_bug_count_label")}"
               description="${translateText(
-                "user_setting.easter_bug_count_desc",
-              )}"
+            "user_setting.easter_bug_count_desc",
+          )}"
               value="100"
               min="0"
               max="1000"
               easter="true"
               @change=${(e: CustomEvent) => {
-                const value = e.detail?.value;
-                if (value !== undefined) {
-                  console.log("Changed:", value);
-                } else {
-                  console.warn("Slider event missing detail.value", e);
-                }
-              }}
+            const value = e.detail?.value;
+            if (value !== undefined) {
+              console.log("Changed:", value);
+            } else {
+              console.warn("Slider event missing detail.value", e);
+            }
+          }}
             ></setting-number>
           `
         : null}

@@ -156,7 +156,7 @@ export class StatsModal extends LitElement {
             </thead>
             <tbody>
               ${clans.map(
-                (clan, index) => html`
+      (clan, index) => html`
                   <tr class="border-b border-gray-800 last:border-b-0">
                     <td class="py-2 pr-3 text-center">
                       ${(index + 1).toLocaleString()}
@@ -174,7 +174,7 @@ export class StatsModal extends LitElement {
                     </td>
                   </tr>
                 `,
-              )}
+    )}
             </tbody>
           </table>
         </div>
@@ -184,7 +184,7 @@ export class StatsModal extends LitElement {
 
   render() {
     return html`
-      <o-modal id="stats-modal" title="${translateText("stats_modal.title")}">
+      <o-modal id="stats-modal" modal-title="${translateText("stats_modal.title")}">
         ${this.renderBody()}
       </o-modal>
     `;

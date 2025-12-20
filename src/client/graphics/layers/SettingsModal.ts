@@ -225,9 +225,10 @@ export class SettingsModal extends LitElement implements Layer {
                   type="range"
                   min="0"
                   max="100"
+                  class="custom-slider"
                   .value=${this.userSettings.backgroundMusicVolume() * 100}
                   @input=${this.onVolumeChange}
-                  class="w-full border border-slate-500 rounded-lg"
+                  style="--progress: ${this.userSettings.backgroundMusicVolume() * 100}%"
                 />
               </div>
               <div class="text-sm text-slate-400">
@@ -252,9 +253,10 @@ export class SettingsModal extends LitElement implements Layer {
                   type="range"
                   min="0"
                   max="100"
+                  class="custom-slider"
                   .value=${this.userSettings.soundEffectsVolume() * 100}
                   @input=${this.onSoundEffectsVolumeChange}
-                  class="w-full border border-slate-500 rounded-lg"
+                  style="--progress: ${this.userSettings.soundEffectsVolume() * 100}%"
                 />
               </div>
               <div class="text-sm text-slate-400">

@@ -70,94 +70,72 @@ export class SinglePlayerModal extends LitElement {
     }
   };
 
+  private renderToggle(id: string, checked: boolean, label: string, onChange: (e: Event) => void) {
+    return html`
+      <label class="option-toggle ${checked ? "selected" : ""}" for="${id}">
+        <span class="option-toggle__label">${label}</span>
+        <input type="checkbox" id="${id}" @change=${onChange} .checked=${checked} style="display:none" />
+        <div class="option-toggle__switch"></div>
+      </label>
+    `;
+  }
+
   render() {
     return html`
-      <o-modal title=${translateText("single_modal.title")}>
+      <o-modal modal-title=${translateText("single_modal.title")}>
         <div class="options-layout">
           <!-- Map Selection -->
           <div class="options-section">
             <div class="option-title">${translateText("map.map")}</div>
             <div class="option-cards flex-col">
-              <!-- Use the imported mapCategories -->
               ${Object.entries(mapCategories).map(
-                ([categoryKey, maps]) => html`
+      ([categoryKey, maps]) => html`
                   <div class="w-full mb-4">
-                    <h3
-                      class="text-lg font-semibold mb-2 text-center text-gray-300"
-                    >
+                    <h3 class="text-lg font-semibold mb-2 text-center text-gray-300">
                       ${translateText(`map_categories.${categoryKey}`)}
                     </h3>
                     <div class="flex flex-row flex-wrap justify-center gap-4">
                       ${maps.map((mapValue) => {
-                        const mapKey = Object.keys(GameMapType).find(
-                          (key) =>
-                            GameMapType[key as keyof typeof GameMapType] ===
-                            mapValue,
-                        );
-                        return html`
-                          <div
-                            @click=${() => this.handleMapSelection(mapValue)}
-                          >
+        const mapKey = Object.keys(GameMapType).find(
+          (key) => GameMapType[key as keyof typeof GameMapType] === mapValue,
+        );
+        return html`
+                          <div @click=${() => this.handleMapSelection(mapValue)}>
                             <map-display
                               .mapKey=${mapKey}
-                              .selected=${!this.useRandomMap &&
-                              this.selectedMap === mapValue}
-                              .translation=${translateText(
-                                `map.${mapKey?.toLowerCase()}`,
-                              )}
+                              .selected=${!this.useRandomMap && this.selectedMap === mapValue}
+                              .translation=${translateText(`map.${mapKey?.toLowerCase()}`)}
                             ></map-display>
                           </div>
                         `;
-                      })}
+      })}
                     </div>
                   </div>
                 `,
-              )}
-              <div
-                class="option-card random-map ${this.useRandomMap
-                  ? "selected"
-                  : ""}"
-                @click=${this.handleRandomMapToggle}
-              >
+    )}
+              <div class="option-card random-map ${this.useRandomMap ? "selected" : ""}" @click=${this.handleRandomMapToggle}>
                 <div class="option-image">
-                  <img
-                    src=${randomMap}
-                    alt="Random Map"
-                    style="width:100%; aspect-ratio: 4/2; object-fit:cover; border-radius:8px;"
-                  />
+                  <img src=${randomMap} alt="Random Map" style="width:100%; aspect-ratio: 4/2; object-fit:cover; border-radius:8px;" />
                 </div>
-                <div class="option-card-title">
-                  ${translateText("map.random")}
-                </div>
+                <div class="option-card-title">${translateText("map.random")}</div>
               </div>
             </div>
           </div>
 
           <!-- Difficulty Selection -->
           <div class="options-section">
-            <div class="option-title">
-              ${translateText("difficulty.difficulty")}
-            </div>
+            <div class="option-title">${translateText("difficulty.difficulty")}</div>
             <div class="option-cards">
               ${Object.entries(Difficulty)
-                .filter(([key]) => isNaN(Number(key)))
-                .map(
-                  ([key, value]) => html`
-                    <div
-                      class="option-card ${this.selectedDifficulty === value
-                        ? "selected"
-                        : ""}"
-                      @click=${() => this.handleDifficultySelection(value)}
-                    >
-                      <difficulty-display
-                        .difficultyKey=${key}
-                      ></difficulty-display>
-                      <p class="option-card-title">
-                        ${translateText(`difficulty.${key}`)}
-                      </p>
+        .filter(([key]) => isNaN(Number(key)))
+        .map(
+          ([key, value]) => html`
+                    <div class="option-card ${this.selectedDifficulty === value ? "selected" : ""}" @click=${() => this.handleDifficultySelection(value)}>
+                      <difficulty-display .difficultyKey=${key}></difficulty-display>
+                      <p class="option-card-title">${translateText(`difficulty.${key}`)}</p>
                     </div>
                   `,
-                )}
+        )}
             </div>
           </div>
 
@@ -165,249 +143,127 @@ export class SinglePlayerModal extends LitElement {
           <div class="options-section">
             <div class="option-title">${translateText("host_modal.mode")}</div>
             <div class="option-cards">
-              <div
-                class="option-card ${this.gameMode === GameMode.FFA
-                  ? "selected"
-                  : ""}"
-                @click=${() => this.handleGameModeSelection(GameMode.FFA)}
-              >
-                <div class="option-card-title">
-                  ${translateText("game_mode.ffa")}
-                </div>
+              <div class="option-card ${this.gameMode === GameMode.FFA ? "selected" : ""}" @click=${() => this.handleGameModeSelection(GameMode.FFA)}>
+                <div class="option-card-title">${translateText("game_mode.ffa")}</div>
               </div>
-              <div
-                class="option-card ${this.gameMode === GameMode.Team
-                  ? "selected"
-                  : ""}"
-                @click=${() => this.handleGameModeSelection(GameMode.Team)}
-              >
-                <div class="option-card-title">
-                  ${translateText("game_mode.teams")}
-                </div>
+              <div class="option-card ${this.gameMode === GameMode.Team ? "selected" : ""}" @click=${() => this.handleGameModeSelection(GameMode.Team)}>
+                <div class="option-card-title">${translateText("game_mode.teams")}</div>
               </div>
             </div>
           </div>
 
           ${this.gameMode === GameMode.FFA
-            ? ""
-            : html`
-                <!-- Team Count Selection -->
+        ? ""
+        : html`
                 <div class="options-section">
-                  <div class="option-title">
-                    ${translateText("host_modal.team_count")}
-                  </div>
-                  <div class="option-cards">
-                    ${[
-                      2,
-                      3,
-                      4,
-                      5,
-                      6,
-                      7,
-                      Quads,
-                      Trios,
-                      Duos,
-                      HumansVsNations,
-                    ].map(
-                      (o) => html`
-                        <div
-                          class="option-card ${this.teamCount === o
-                            ? "selected"
-                            : ""}"
-                          @click=${() => this.handleTeamCountSelection(o)}
+                  <div class="option-title">${translateText("host_modal.team_count")}</div>
+                  <div class="team-mode-selector">
+                    ${[2, 3, 4, 5, 6, 7].map(
+          (num) => html`
+                        <div 
+                          class="team-mode-card ${this.teamCount === num ? "selected" : ""}" 
+                          @click=${() => this.handleTeamCountSelection(num)}
                         >
-                          <div class="option-card-title">
-                            ${typeof o === "string"
-                              ? o === HumansVsNations
-                                ? translateText("public_lobby.teams_hvn")
-                                : translateText(`host_modal.teams_${o}`)
-                              : translateText(`public_lobby.teams`, { num: o })}
-                          </div>
+                          <div class="team-mode-card__value">${num}</div>
+                          <div class="team-mode-card__label">TEAMS</div>
                         </div>
                       `,
-                    )}
+        )}
+                    <div 
+                      class="team-mode-card ${this.teamCount === Duos ? "selected" : ""}" 
+                      @click=${() => this.handleTeamCountSelection(Duos)}
+                    >
+                      <div class="team-mode-card__value">2s</div>
+                      <div class="team-mode-card__label">DUOS</div>
+                    </div>
+                    <div 
+                      class="team-mode-card ${this.teamCount === Trios ? "selected" : ""}" 
+                      @click=${() => this.handleTeamCountSelection(Trios)}
+                    >
+                      <div class="team-mode-card__value">3s</div>
+                      <div class="team-mode-card__label">TRIOS</div>
+                    </div>
+                    <div 
+                      class="team-mode-card ${this.teamCount === Quads ? "selected" : ""}" 
+                      @click=${() => this.handleTeamCountSelection(Quads)}
+                    >
+                      <div class="team-mode-card__value">4s</div>
+                      <div class="team-mode-card__label">QUADS</div>
+                    </div>
+                    <div 
+                      class="team-mode-card team-mode-card--special ${this.teamCount === HumansVsNations ? "selected" : ""}" 
+                      @click=${() => this.handleTeamCountSelection(HumansVsNations)}
+                    >
+                      <span>🛡️</span>
+                      <div class="flex flex-col items-start">
+                        <div class="team-mode-card__value">Humans vs AI</div>
+                        <div class="team-mode-card__label">SPECIAL MODE</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               `}
 
           <!-- Game Options -->
           <div class="options-section">
-            <div class="option-title">
-              ${translateText("single_modal.options_title")}
+            <div class="option-title">${translateText("single_modal.options_title")}</div>
+            
+            <div class="option-slider-row">
+              <label for="bots-count">
+                <span>${translateText("single_modal.bots")}</span>
+                <span class="option-slider-value">${this.bots === 0 ? translateText("single_modal.bots_disabled") : this.bots}</span>
+              </label>
+              <input 
+                type="range" 
+                id="bots-count" 
+                class="custom-slider"
+                min="0" 
+                max="400" 
+                step="1" 
+                @input=${this.handleBotsChange} 
+                @change=${this.handleBotsChange} 
+                .value="${String(this.bots)}" 
+                style="--progress: ${(this.bots / 400) * 100}%"
+              />
             </div>
-            <div class="option-cards">
-              <label for="bots-count" class="option-card">
-                <input
-                  type="range"
-                  id="bots-count"
-                  min="0"
-                  max="400"
-                  step="1"
-                  @input=${this.handleBotsChange}
-                  @change=${this.handleBotsChange}
-                  .value="${String(this.bots)}"
-                />
-                <div class="option-card-title">
-                  <span>${translateText("single_modal.bots")}</span>${this
-                    .bots === 0
-                    ? translateText("single_modal.bots_disabled")
-                    : this.bots}
-                </div>
-              </label>
 
-              ${!(
-                this.gameMode === GameMode.Team &&
-                this.teamCount === HumansVsNations
-              )
-                ? html`
-                    <label
-                      for="singleplayer-modal-disable-nations"
-                      class="option-card ${this.disableNations
-                        ? "selected"
-                        : ""}"
-                    >
-                      <div class="checkbox-icon"></div>
-                      <input
-                        type="checkbox"
-                        id="singleplayer-modal-disable-nations"
-                        @change=${this.handleDisableNationsChange}
-                        .checked=${this.disableNations}
-                      />
-                      <div class="option-card-title">
-                        ${translateText("single_modal.disable_nations")}
-                      </div>
-                    </label>
-                  `
-                : ""}
-
-              <label
-                for="singleplayer-modal-instant-build"
-                class="option-card ${this.instantBuild ? "selected" : ""}"
-              >
-                <div class="checkbox-icon"></div>
-                <input
-                  type="checkbox"
-                  id="singleplayer-modal-instant-build"
-                  @change=${this.handleInstantBuildChange}
-                  .checked=${this.instantBuild}
-                />
-                <div class="option-card-title">
-                  ${translateText("single_modal.instant_build")}
-                </div>
-              </label>
-
-              <label
-                for="singleplayer-modal-random-spawn"
-                class="option-card ${this.randomSpawn ? "selected" : ""}"
-              >
-                <div class="checkbox-icon"></div>
-                <input
-                  type="checkbox"
-                  id="singleplayer-modal-random-spawn"
-                  @change=${this.handleRandomSpawnChange}
-                  .checked=${this.randomSpawn}
-                />
-                <div class="option-card-title">
-                  ${translateText("single_modal.random_spawn")}
-                </div>
-              </label>
-
-              <label
-                for="singleplayer-modal-infinite-gold"
-                class="option-card ${this.infiniteGold ? "selected" : ""}"
-              >
-                <div class="checkbox-icon"></div>
-                <input
-                  type="checkbox"
-                  id="singleplayer-modal-infinite-gold"
-                  @change=${this.handleInfiniteGoldChange}
-                  .checked=${this.infiniteGold}
-                />
-                <div class="option-card-title">
-                  ${translateText("single_modal.infinite_gold")}
-                </div>
-              </label>
-
-              <label
-                for="singleplayer-modal-infinite-troops"
-                class="option-card ${this.infiniteTroops ? "selected" : ""}"
-              >
-                <div class="checkbox-icon"></div>
-                <input
-                  type="checkbox"
-                  id="singleplayer-modal-infinite-troops"
-                  @change=${this.handleInfiniteTroopsChange}
-                  .checked=${this.infiniteTroops}
-                />
-                <div class="option-card-title">
-                  ${translateText("single_modal.infinite_troops")}
-                </div>
-              </label>
-              <label
-                for="singleplayer-modal-compact-map"
-                class="option-card ${this.compactMap ? "selected" : ""}"
-              >
-                <div class="checkbox-icon"></div>
-                <input
-                  type="checkbox"
-                  id="singleplayer-modal-compact-map"
-                  @change=${this.handleCompactMapChange}
-                  .checked=${this.compactMap}
-                />
-                <div class="option-card-title">
-                  ${translateText("single_modal.compact_map")}
-                </div>
-              </label>
-              <label
-                for="end-timer"
-                class="option-card ${this.maxTimer ? "selected" : ""}"
-              >
-                <div class="checkbox-icon"></div>
-                <input
-                  type="checkbox"
-                  id="end-timer"
-                  @change=${(e: Event) => {
-                    const checked = (e.target as HTMLInputElement).checked;
-                    if (!checked) {
-                      this.maxTimerValue = undefined;
-                    }
-                    this.maxTimer = checked;
-                  }}
-                  .checked=${this.maxTimer}
-                />
-                ${this.maxTimer === false
-                  ? ""
-                  : html`<input
-                      type="number"
-                      id="end-timer-value"
-                      min="0"
-                      max="120"
-                      .value=${String(this.maxTimerValue ?? "")}
-                      style="width: 60px; color: black; text-align: right; border-radius: 8px;"
-                      @input=${this.handleMaxTimerValueChanges}
-                      @keydown=${this.handleMaxTimerValueKeyDown}
-                    />`}
-                <div class="option-card-title">
-                  ${translateText("single_modal.max_timer")}
+            <div class="options-toggle-grid">
+              ${!(this.gameMode === GameMode.Team && this.teamCount === HumansVsNations)
+        ? this.renderToggle("singleplayer-modal-disable-nations", this.disableNations, translateText("single_modal.disable_nations"), this.handleDisableNationsChange)
+        : ""}
+              ${this.renderToggle("singleplayer-modal-instant-build", this.instantBuild, translateText("single_modal.instant_build"), this.handleInstantBuildChange)}
+              ${this.renderToggle("singleplayer-modal-random-spawn", this.randomSpawn, translateText("single_modal.random_spawn"), this.handleRandomSpawnChange)}
+              ${this.renderToggle("singleplayer-modal-infinite-gold", this.infiniteGold, translateText("single_modal.infinite_gold"), this.handleInfiniteGoldChange)}
+              ${this.renderToggle("singleplayer-modal-infinite-troops", this.infiniteTroops, translateText("single_modal.infinite_troops"), this.handleInfiniteTroopsChange)}
+              ${this.renderToggle("singleplayer-modal-compact-map", this.compactMap, translateText("single_modal.compact_map"), this.handleCompactMapChange)}
+              
+              <label class="option-toggle ${this.maxTimer ? "selected" : ""}" for="max-timer">
+                <span class="option-toggle__label">${translateText("single_modal.max_timer")}</span>
+                <input type="checkbox" id="max-timer" @change=${(e: Event) => {
+        const checked = (e.target as HTMLInputElement).checked;
+        if (!checked) this.maxTimerValue = undefined;
+        this.maxTimer = checked;
+      }} .checked=${this.maxTimer} style="display:none" />
+                <div class="flex items-center gap-2">
+                  ${this.maxTimer ? html`
+                    <input type="number" id="end-timer-value" min="0" max="120" .value=${String(this.maxTimerValue ?? "")} 
+                      style="width: 45px; color: black; text-align: right; border-radius: 4px; font-size: 12px; padding: 2px 4px;"
+                      @input=${this.handleMaxTimerValueChanges} @keydown=${this.handleMaxTimerValueKeyDown} />
+                  ` : ""}
+                  <div class="option-toggle__switch"></div>
                 </div>
               </label>
             </div>
+          </div>
 
-            <hr
-              style="width: 100%; border-top: 1px solid #444; margin: 16px 0;"
-            />
-            <div
-              style="margin: 8px 0 12px 0; font-weight: bold; color: #ccc; text-align: center;"
-            >
-              ${translateText("single_modal.enables_title")}
-            </div>
-            <div
-              style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;"
-            >
+          <!-- Unit Toggles Section -->
+          <div class="options-section options-section--units">
+            <div class="option-title">${translateText("single_modal.enables_title")}</div>
+            <div class="unit-toggles-grid">
               ${renderUnitTypeOptions({
-                disabledUnits: this.disabledUnits,
-                toggleUnit: this.toggleUnit.bind(this),
-              })}
+        disabledUnits: this.disabledUnits,
+        toggleUnit: this.toggleUnit.bind(this),
+      })}
             </div>
           </div>
         </div>
@@ -422,7 +278,7 @@ export class SinglePlayerModal extends LitElement {
   }
 
   createRenderRoot() {
-    return this; // light DOM
+    return this;
   }
 
   public open() {
@@ -591,13 +447,13 @@ export class SinglePlayerModal extends LitElement {
                 .map((u) => Object.values(UnitType).find((ut) => ut === u))
                 .filter((ut): ut is UnitType => ut !== undefined),
               ...(this.gameMode === GameMode.Team &&
-              this.teamCount === HumansVsNations
+                this.teamCount === HumansVsNations
                 ? {
-                    disableNations: false,
-                  }
+                  disableNations: false,
+                }
                 : {
-                    disableNations: this.disableNations,
-                  }),
+                  disableNations: this.disableNations,
+                }),
             },
             lobbyCreatedAt: Date.now(), // ms; server should be authoritative in MP
           },

@@ -5,7 +5,7 @@ import { translateText } from "../../Utils";
 @customElement("o-modal")
 export class OModal extends LitElement {
   @state() public isModalOpen = false;
-  @property({ type: String }) title = "";
+  @property({ type: String, attribute: "modal-title" }) modalTitle = "";
   @property({ type: String }) translationKey = "";
   @property({ type: Boolean }) alwaysMaximized = false;
 
@@ -26,15 +26,20 @@ export class OModal extends LitElement {
     }
 
     .c-modal__wrapper {
-      border-radius: 8px;
+      border-radius: 12px;
       min-width: 340px;
-      max-width: 860px;
+      max-width: 900px;
+      background: rgba(15, 15, 20, 0.4);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
     }
 
     .c-modal__wrapper.always-maximized {
       width: 100%;
       min-width: 340px;
-      max-width: 860px;
+      max-width: 900px;
       min-height: 320px;
       /* Fallback for older browsers */
       height: 60vh;
@@ -44,13 +49,14 @@ export class OModal extends LitElement {
 
     .c-modal__header {
       position: relative;
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
-      font-size: 18px;
-      background: #000000a1;
+      border-radius: 12px 12px 0 0;
+      font-size: 16px;
+      font-weight: 600;
+      background: rgba(0, 0, 0, 0.4);
       text-align: center;
       color: #fff;
-      padding: 1rem 2.4rem 1rem 1.4rem;
+      padding: 1rem 2.4rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .c-modal__close {
@@ -68,6 +74,26 @@ export class OModal extends LitElement {
       max-height: 60dvh;
       overflow-y: auto;
       backdrop-filter: blur(8px);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    }
+
+    .c-modal__content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .c-modal__content::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+
+    .c-modal__content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 4px;
+    }
+
+    .c-modal__content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.4);
     }
   `;
 
@@ -89,13 +115,13 @@ export class OModal extends LitElement {
               <div
                 @click=${(e: Event) => e.stopPropagation()}
                 class="c-modal__wrapper ${this.alwaysMaximized
-                  ? "always-maximized"
-                  : ""}"
+            ? "always-maximized"
+            : ""}"
               >
                 <header class="c-modal__header">
                   ${`${this.translationKey}` === ""
-                    ? `${this.title}`
-                    : `${translateText(this.translationKey)}`}
+            ? `${this.modalTitle}`
+            : `${translateText(this.translationKey)}`}
                   <div class="c-modal__close" @click=${this.close}>✕</div>
                 </header>
                 <section class="c-modal__content">

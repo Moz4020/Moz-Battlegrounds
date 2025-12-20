@@ -48,6 +48,26 @@ export class NewsModal extends LitElement {
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    }
+
+    .news-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .news-container::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+
+    .news-container::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 4px;
+    }
+
+    .news-container::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.4);
     }
 
     .news-content {
@@ -71,15 +91,15 @@ export class NewsModal extends LitElement {
 
   render() {
     return html`
-      <o-modal title=${translateText("news.title")}>
+      <o-modal modal-title=${translateText("news.title")}>
 <div class="options-layout">
           <div class="options-section">
             <div class="news-container">
               <div class="news-content">
                 ${resolveMarkdown(this.markdown, {
-                  includeImages: true,
-                  includeCodeBlockClassNames: true,
-                })}
+      includeImages: true,
+      includeCodeBlockClassNames: true,
+    })}
               </div>
             </div>
           </div>
@@ -125,8 +145,6 @@ export class NewsModal extends LitElement {
 
 @customElement("news-button")
 export class NewsButton extends LitElement {
-  @query("news-modal") private newsModal!: NewsModal;
-
   connectedCallback() {
     super.connectedCallback();
     this.checkForNewVersion();
@@ -158,11 +176,22 @@ export class NewsButton extends LitElement {
             src="${megaphone}"
             alt=${translateText("news.title")}
           />
-
         </button>
       </div>
-      <news-modal></news-modal>
     `;
+  }
+
+  private getOrCreateNewsModal(): NewsModal {
+    let modal = document.querySelector("news-modal") as NewsModal;
+    if (!modal) {
+      modal = document.createElement("news-modal") as NewsModal;
+      document.body.appendChild(modal);
+    }
+    return modal;
+  }
+
+  private get newsModal(): NewsModal {
+    return this.getOrCreateNewsModal();
   }
 
   createRenderRoot() {

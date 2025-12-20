@@ -51,12 +51,12 @@ export class ChatModal extends LitElement {
     string,
     Array<{ text: string; requiresPlayer: boolean }>
   > = {
-    help: [{ text: "Please give me troops!", requiresPlayer: false }],
-    attack: [{ text: "Attack [P1]!", requiresPlayer: true }],
-    defend: [{ text: "Defend [P1]!", requiresPlayer: true }],
-    greet: [{ text: "Hello!", requiresPlayer: false }],
-    misc: [{ text: "Let's go!", requiresPlayer: false }],
-  };
+      help: [{ text: "Please give me troops!", requiresPlayer: false }],
+      attack: [{ text: "Attack [P1]!", requiresPlayer: true }],
+      defend: [{ text: "Defend [P1]!", requiresPlayer: true }],
+      greet: [{ text: "Hello!", requiresPlayer: false }],
+      misc: [{ text: "Let's go!", requiresPlayer: false }],
+    };
 
   public categories = [
     { id: "help" },
@@ -73,54 +73,54 @@ export class ChatModal extends LitElement {
 
   render() {
     return html`
-      <o-modal title="${translateText("chat.title")}">
+      <o-modal modal-title="${translateText("chat.title")}">
         <div class="chat-columns">
           <div class="chat-column">
             <div class="column-title">${translateText("chat.category")}</div>
             ${this.categories.map(
-              (category) => html`
+      (category) => html`
                 <button
                   class="chat-option-button ${this.selectedCategory ===
-                  category.id
-                    ? "selected"
-                    : ""}"
+          category.id
+          ? "selected"
+          : ""}"
                   @click=${() => this.selectCategory(category.id)}
                 >
                   ${translateText(`chat.cat.${category.id}`)}
                 </button>
               `,
-            )}
+    )}
           </div>
 
           ${this.selectedCategory
-            ? html`
+        ? html`
                 <div class="chat-column">
                   <div class="column-title">
                     ${translateText("chat.phrase")}
                   </div>
                   <div class="phrase-scroll-area">
                     ${this.getPhrasesForCategory(this.selectedCategory).map(
-                      (phrase) => html`
+          (phrase) => html`
                         <button
                           class="chat-option-button ${this
-                            .selectedPhraseText ===
-                          translateText(
-                            `chat.${this.selectedCategory}.${phrase.key}`,
-                          )
-                            ? "selected"
-                            : ""}"
+              .selectedPhraseText ===
+              translateText(
+                `chat.${this.selectedCategory}.${phrase.key}`,
+              )
+              ? "selected"
+              : ""}"
                           @click=${() => this.selectPhrase(phrase)}
                         >
                           ${this.renderPhrasePreview(phrase)}
                         </button>
                       `,
-                    )}
+        )}
                   </div>
                 </div>
               `
-            : null}
+        : null}
           ${this.requiresPlayerSelection || this.selectedPlayer
-            ? html`
+        ? html`
                 <div class="chat-column">
                   <div class="column-title">
                     ${translateText("chat.player")}
@@ -136,35 +136,35 @@ export class ChatModal extends LitElement {
 
                   <div class="player-scroll-area">
                     ${this.getSortedFilteredPlayers().map(
-                      (player) => html`
+          (player) => html`
                         <button
                           class="chat-option-button ${this.selectedPlayer ===
-                          player
-                            ? "selected"
-                            : ""}"
+              player
+              ? "selected"
+              : ""}"
                           @click=${() => this.selectPlayer(player)}
                         >
                           ${player.name()}
                         </button>
                       `,
-                    )}
+        )}
                   </div>
                 </div>
               `
-            : null}
+        : null}
         </div>
 
         <div class="chat-preview">
           ${this.previewText
-            ? translateText(this.previewText)
-            : translateText("chat.build")}
+        ? translateText(this.previewText)
+        : translateText("chat.build")}
         </div>
         <div class="chat-send">
           <button
             class="chat-send-button"
             @click=${this.sendChatMessage}
             ?disabled=${!this.previewText ||
-            (this.requiresPlayerSelection && !this.selectedPlayer)}
+      (this.requiresPlayerSelection && !this.selectedPlayer)}
           >
             ${translateText("chat.send")}
           </button>

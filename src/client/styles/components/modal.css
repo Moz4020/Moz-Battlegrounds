@@ -43,8 +43,32 @@
   color: #fff;
   padding: 1.4rem;
   max-height: 60dvh;
-  overflow-y: scroll;
+  overflow-y: auto;
   backdrop-filter: blur(8px);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+/* Webkit scrollbar styles for modals */
+.c-modal__content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.c-modal__content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.c-modal__content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.c-modal__content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+  background-clip: padding-box;
 }
 
 /*This will be removed in future*/

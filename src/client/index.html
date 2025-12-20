@@ -153,47 +153,56 @@
     ></div>
 
     <main class="flex justify-center flex-grow">
-      <div class="container pt-12">
-
-        <div class="container__row">
-          <flag-input class="w-[20%] md:w-[20%]"></flag-input>
-          <username-input class="relative w-full"></username-input>
-          <news-button class="w-[20%] component-hideable"></news-button>
+      <div class="container pt-8">
+        
+        <div class="menu-card">
+          <div class="container__row">
+            <flag-input class="w-[20%] md:w-[20%]"></flag-input>
+            <username-input class="relative w-full"></username-input>
+            <news-button class="w-[20%] component-hideable"></news-button>
+          </div>
         </div>
-        <div></div>
-        <div class="container__row container__row--equal">
+
+        <div class="menu-section">
           <o-button
-            id="host-lobby-button"
-            title="Create Lobby"
-            translationKey="main.create_lobby"
+            id="single-player"
+            title="Single Player"
+            translationKey="main.single_player"
             block
-            secondary
-          ></o-button>
-          <o-button
-            id="join-private-lobby-button"
-            title="Join Lobby"
-            translationKey="main.join_lobby"
-            block
-            secondary
           ></o-button>
         </div>
 
-        <o-button
-          id="single-player"
-          title="Single Player"
-          translationKey="main.single_player"
-          block
-        ></o-button>
+        <div class="menu-section">
+          <div class="menu-section-label">Multiplayer</div>
+          <div class="container__row container__row--equal">
+            <o-button
+              id="host-lobby-button"
+              title="Create Lobby"
+              translationKey="main.create_lobby"
+              block
+              secondary
+            ></o-button>
+            <o-button
+              id="join-private-lobby-button"
+              title="Join Lobby"
+              translationKey="main.join_lobby"
+              block
+              secondary
+            ></o-button>
+          </div>
+        </div>
 
-        <o-button
-          id="help-button"
-          title="Instructions"
-          translationKey="main.instructions"
-          block
-          secondary
-        ></o-button>
-        <div class="container__row">
-          <lang-selector class="w-full"></lang-selector>
+        <div class="menu-section">
+          <o-button
+            id="help-button"
+            title="Instructions"
+            translationKey="main.instructions"
+            block
+            secondary
+          ></o-button>
+          <div class="mt-4">
+            <lang-selector class="w-full"></lang-selector>
+          </div>
         </div>
       </div>
     </main>
@@ -202,13 +211,12 @@
     <button
       id="settings-button"
       title="Settings"
-      class="fixed bottom-4 right-4 z-50 rounded-full p-2 shadow-lg transition-colors duration-300 flex items-center justify-center"
-      style="width: 80px; height: 80px; background-color: var(--primaryColor)"
+      class="fixed bottom-4 right-4 z-50 rounded-full p-3 shadow-lg transition-all duration-200 flex items-center justify-center hover:scale-105 bg-slate-800/80 backdrop-blur-sm border border-white/10 hover:bg-slate-700/80"
     >
       <img
         src="../../resources/images/SettingIconWhite.svg"
         alt="Settings"
-        style="width: 72px; height: 72px"
+        class="w-6 h-6 opacity-80"
       />
     </button>
 
