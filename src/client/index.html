@@ -111,7 +111,7 @@
       <div class="l-header__content">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 500 80"
+          viewBox="0 0 820 55"
           width="100%"
           height="100%"
           class="l-header__logo"
@@ -124,31 +124,22 @@
               x2="100%"
               y2="0%"
             >
-              <stop offset="0%" style="stop-color: #1e5aa8" />
-              <stop offset="50%" style="stop-color: #3498db" />
-              <stop offset="100%" style="stop-color: #e74c3c" />
+              <stop offset="0%" style="stop-color: #e74c3c" />
+              <stop offset="40%" style="stop-color: #c0392b" />
+              <stop offset="60%" style="stop-color: #2980b9" />
+              <stop offset="100%" style="stop-color: #1e5aa8" />
             </linearGradient>
           </defs>
           <text
-            x="250"
-            y="35"
+            x="410"
+            y="42"
             text-anchor="middle"
             fill="url(#logo-gradient)"
             font-family="'Press Start 2P', 'Courier New', monospace"
-            font-size="28"
+            font-size="38"
             font-weight="bold"
-            style="letter-spacing: 2px;"
-          >MOZ</text>
-          <text
-            x="250"
-            y="68"
-            text-anchor="middle"
-            fill="url(#logo-gradient)"
-            font-family="'Press Start 2P', 'Courier New', monospace"
-            font-size="18"
-            font-weight="bold"
-            style="letter-spacing: 1px;"
-          >BATTLEGROUNDS</text>
+            style="letter-spacing: 4px;"
+          >MOZ BATTLEGROUNDS</text>
         </svg>
         <div id="game-version" class="l-header__highlightText text-center">
           Loading version...
@@ -254,36 +245,26 @@
 
 <!-- Footer section -->
     <footer
-      class="flex justify-center px-3 py-3 md:px-6 md:py-3 bg-[var(--boxBackgroundColor)] backdrop-blur-sm"
+      class="flex justify-center px-4 py-4 bg-[var(--boxBackgroundColor)] backdrop-blur-sm"
     >
       <div
-        class="flex flex-col md:flex-row flex-nowrap justify-between items-center gap-4 md:gap-0 w-full max-w-[860px] flex-1"
+        class="flex flex-row flex-wrap justify-center items-center gap-2 text-sm text-white/60"
       >
-        <div class="flex justify-center text-white/70 flex-shrink-0">
-          <span class="text-white/70">
-            © Moz Battlegrounds
-          </span>
-        </div>
-        <div
-          class="flex flex-col sm:flex-row gap-4 sm:gap-4 text-white/70 justify-center md:justify-end flex-shrink-0"
-        >
-          <a
-            href="/privacy-policy.html"
-            data-i18n="main.privacy_policy"
-            class="text-white/70 hover:text-white transition-colors duration-300 ease-in-out whitespace-nowrap"
-            target="_blank"
-          >
-            Privacy Policy
-          </a>
-          <a
-            href="/terms-of-service.html"
-            data-i18n="main.terms_of_service"
-            class="text-white/70 hover:text-white transition-colors duration-300 ease-in-out whitespace-nowrap"
-            target="_blank"
-          >
-            Terms of Service
-          </a>
-        </div>
+        <span>© 2024 Moz Battlegrounds</span>
+        <span class="hidden sm:inline">•</span>
+        <a
+          href="/privacy-policy.html"
+          data-i18n="main.privacy_policy"
+          class="hover:text-white transition-colors"
+          target="_blank"
+        >Privacy Policy</a>
+        <span class="hidden sm:inline">•</span>
+        <a
+          href="/terms-of-service.html"
+          data-i18n="main.terms_of_service"
+          class="hover:text-white transition-colors"
+          target="_blank"
+        >Terms of Service</a>
       </div>
     </footer>
     <!-- Game modals and overlays -->
