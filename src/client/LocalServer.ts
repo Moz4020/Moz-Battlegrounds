@@ -48,7 +48,7 @@ export class LocalServer {
     private lobbyConfig: LobbyConfig,
     private isReplay: boolean,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   public updateCallback(
     clientConnect: () => void,
@@ -128,7 +128,10 @@ export class LocalServer {
       if (!this.lobbyConfig.gameRecord) {
         if (clientMsg.turnNumber % 100 === 0) {
           // In singleplayer, only store hash every 100 turns to reduce size of game record.
-          this.turns[clientMsg.turnNumber].hash = clientMsg.hash;
+          const turn = this.turns[clientMsg.turnNumber];
+          if (turn) {
+            turn.hash = clientMsg.hash;
+          }
         }
         return;
       }

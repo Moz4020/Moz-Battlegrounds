@@ -293,9 +293,9 @@ export class HostLobbyModal extends LitElement {
               ${this.renderToggle("infinite-troops", this.infiniteTroops, translateText("host_modal.infinite_troops"), this.handleInfiniteTroopsChange)}
               ${this.renderToggle("host-modal-compact-map", this.compactMap, translateText("host_modal.compact_map"), this.handleCompactMapChange)}
               
-              <label class="option-toggle ${this.maxTimer ? "selected" : ""}" for="max-timer">
+              <label class="option-toggle ${this.maxTimer ? "selected" : ""}" for="host-max-timer">
                 <span class="option-toggle__label">${translateText("host_modal.max_timer")}</span>
-                <input type="checkbox" id="max-timer" @change=${(e: Event) => {
+                <input type="checkbox" id="host-max-timer" @change=${(e: Event) => {
         const checked = (e.target as HTMLInputElement).checked;
         if (!checked) this.maxTimerValue = undefined;
         this.maxTimer = checked;
@@ -303,8 +303,8 @@ export class HostLobbyModal extends LitElement {
       }} .checked=${this.maxTimer} style="display:none" />
                 <div class="flex items-center gap-2">
                   ${this.maxTimer ? html`
-                    <input type="number" id="end-timer-value" min="0" max="120" .value=${String(this.maxTimerValue ?? "")} 
-                      style="width: 45px; color: black; text-align: right; border-radius: 4px; font-size: 12px; padding: 2px 4px;"
+                    <input type="number" id="host-end-timer-value" min="0" max="120" .value=${String(this.maxTimerValue ?? "")} 
+                      style="width: 45px; background: rgba(0,0,0,0.6); color: white; text-align: right; border-radius: 4px; font-size: 12px; padding: 2px 4px; border: 1px solid rgba(255,255,255,0.2);"
                       @input=${this.handleMaxTimerValueChanges} @keydown=${this.handleMaxTimerValueKeyDown} />
                   ` : ""}
                   <div class="option-toggle__switch"></div>

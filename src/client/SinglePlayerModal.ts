@@ -247,7 +247,7 @@ export class SinglePlayerModal extends LitElement {
                 <div class="flex items-center gap-2">
                   ${this.maxTimer ? html`
                     <input type="number" id="end-timer-value" min="0" max="120" .value=${String(this.maxTimerValue ?? "")} 
-                      style="width: 45px; color: black; text-align: right; border-radius: 4px; font-size: 12px; padding: 2px 4px;"
+                      style="width: 45px; background: rgba(0,0,0,0.6); color: white; text-align: right; border-radius: 4px; font-size: 12px; padding: 2px 4px; border: 1px solid rgba(255,255,255,0.2);"
                       @input=${this.handleMaxTimerValueChanges} @keydown=${this.handleMaxTimerValueKeyDown} />
                   ` : ""}
                   <div class="option-toggle__switch"></div>
