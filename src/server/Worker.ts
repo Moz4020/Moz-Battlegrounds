@@ -99,7 +99,7 @@ export async function startWorker() {
   app.set("trust proxy", 3);
   app.use(compression());
   app.use(express.json());
-  app.use(express.static(path.join(__dirname, "../../out")));
+  app.use(express.static(path.join(process.cwd(), "out")));
   app.use(
     rateLimit({
       windowMs: 1000, // 1 second
