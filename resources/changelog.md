@@ -1,5 +1,22 @@
 # Moz Battlegrounds Changelog
 
+## Version 0.2 - Branding Update
+
+### New Features
+
+- **New Logo** - Custom "Moz Battlegrounds" pixel-style logo
+- **Blue Theme** - New blue accent color throughout the UI
+- **Clean Branding** - Removed experimental build label
+
+### UI Improvements
+
+- Updated primary color scheme from red to blue (#1e5aa8)
+- Updated button colors, hovers, and selected states
+- Updated map card selection highlighting
+- New blue gradient logo design
+
+---
+
 ## Version 0.1 - Initial Release
 
 Welcome to Moz Battlegrounds!

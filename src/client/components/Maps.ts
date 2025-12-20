@@ -79,7 +79,7 @@ export class MapDisplay extends LitElement {
 
     .option-card.selected {
       border-color: var(--primaryColor);
-      background: rgba(229, 57, 53, 0.1);
+      background: rgba(30, 90, 168, 0.1);
     }
 
     .option-card-title {
