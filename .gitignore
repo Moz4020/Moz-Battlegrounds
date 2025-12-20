@@ -1,4 +1,5 @@
 build/
+dist/
 node_modules/
 out/
 static/
@@ -11,3 +12,4 @@ resources/.DS_Store
 .clinic/
 CLAUDE.md
 .idea/
+nul
