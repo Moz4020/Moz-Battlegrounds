@@ -26,7 +26,7 @@ import { logger } from "./Logger";
 
 import { GameEnv } from "../core/configuration/Config";
 import { MapPlaylist } from "./MapPlaylist";
-import { PrivilegeRefresher } from "./PrivilegeRefresher";
+import { FailOpenPrivilegeChecker } from "./Privilege";
 import { verifyTurnstileToken } from "./Turnstile";
 import { initWorkerMetrics } from "./WorkerMetrics";
 
@@ -65,11 +65,8 @@ export async function startWorker() {
     initWorkerMetrics(gm);
   }
 
-  const privilegeRefresher = new PrivilegeRefresher(
-    config.jwtIssuer() + "/cosmetics.json",
-    log,
-  );
-  privilegeRefresher.start();
+  // Using FailOpenPrivilegeChecker - cosmetics system disabled for Moz Battlegrounds
+  const privilegeChecker = new FailOpenPrivilegeChecker();
 
   // Middleware to handle /wX path prefix
   app.use((req, res, next) => {
@@ -406,8 +403,7 @@ export async function startWorker() {
           }
         }
 
-        const cosmeticResult = privilegeRefresher
-          .get()
+        const cosmeticResult = privilegeChecker
           .isAllowed(flares ?? [], clientMsg.cosmetics ?? {});
 
         if (cosmeticResult.type === "forbidden") {

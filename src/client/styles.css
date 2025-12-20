@@ -144,7 +144,7 @@ label.option-card:hover {
   height: 16px;
   border: 2px solid #aaa;
   border-radius: 6px;
-  margin: 4px;
+  margin: 4px 4px 0 4px;
   display: flex;
   align-items: center;
   justify-content: center;
