@@ -85,38 +85,6 @@
         display: none;
       }
 
-      .snow {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 1050;
-      }
-
-      .snowflake {
-        position: absolute;
-        background-size: contain;
-        background-repeat: no-repeat;
-        pointer-events: none;
-        animation-name: snowflake-fall;
-        animation-timing-function: linear;
-        animation-iteration-count: infinite;
-        animation-duration: 10s; /* Adjust duration to taste */
-        z-index: 9999; /* Increased z-index for visibility */
-        opacity: 0.8; /* Default opacity */
-        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5)); /* Subtle glow */
-      }
-
-      @keyframes snowflake-fall {
-        from {
-          transform: translateY(-100%) rotate(0deg); /* Start off-screen */
-        }
-        to {
-          transform: translateY(105vh) rotate(360deg); /* Fall completely out of view */
-        }
-      }
     </style>
 
     <!-- Immediate execution to prevent FOUC -->
@@ -135,7 +103,6 @@
   <body
     class="h-full select-none font-sans min-h-screen bg-opacity-0 bg-cover bg-center bg-fixed transition-opacity duration-300 ease-in-out flex flex-col"
   >
-    <div class="snow"></div>
     <header class="l-header">
       <div class="l-header__content">
         <svg
@@ -207,30 +174,15 @@
       class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999]"
     ></div>
 
-    <!-- Main container with responsive padding -->
     <main class="flex justify-center flex-grow">
       <div class="container pt-12">
-        <token-login class="w-[20%] md:w-[15%]"></token-login>
 
         <div class="container__row">
           <flag-input class="w-[20%] md:w-[20%]"></flag-input>
-          <territory-patterns-modal class="w-[20%] md:w-[15%]">
-            <button
-              id="territory-patterns-input-preview-button"
-              class="w-full border p-[4px] rounded-lg flex cursor-pointer border-black/30 dark:border-gray-300/60 bg-white/70 dark:bg-[rgba(55,65,81,0.7)] justify-center"
-              title="Pick a pattern!"
-            ></button>
-          </territory-patterns-modal>
           <username-input class="relative w-full"></username-input>
           <news-button class="w-[20%] component-hideable"></news-button>
         </div>
         <div></div>
-        <div>
-          <public-lobby class="block"></public-lobby>
-        </div>
-        <div>
-          <matchmaking-button class="w-[20%] md:w-[15%]"></matchmaking-button>
-        </div>
         <div class="container__row container__row--equal">
           <o-button
             id="host-lobby-button"
@@ -246,12 +198,6 @@
             block
             secondary
           ></o-button>
-          <!-- <o-button
-            id="chat-button"
-            title="Chat Test"
-            block
-            secondary
-          ></o-button> -->
         </div>
 
         <o-button
@@ -353,7 +299,6 @@
         </div>
       </div>
     </footer>
-    <account-button></account-button>
     <!-- Game modals and overlays -->
     <single-player-modal></single-player-modal>
     <host-lobby-modal></host-lobby-modal>
@@ -374,7 +319,6 @@
     <help-modal></help-modal>
     <game-info-modal></game-info-modal>
     <dark-mode-button></dark-mode-button>
-    <stats-button></stats-button>
     <alert-frame></alert-frame>
     <chat-modal></chat-modal>
     <user-setting></user-setting>

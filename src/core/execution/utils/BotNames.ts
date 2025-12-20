@@ -288,13 +288,6 @@ export const COMMUNITY_FULL_ELF_NAMES = [
   "MizuUmi the YT Elf",
 ];
 export const SPECIAL_FULL_ELF_NAMES = [
-  "Santa",
-  "Rudolf the Reindeer",
-  "Frosty the Snowman",
-  "Hermey the Elf",
-  "Ivan the Elf",
-  "Elf on the Shelf",
-  "Buddy the Elf",
   "Legolas",
   "Elrond",
   "Galadriel",

@@ -62,7 +62,7 @@ export class UserSettings {
   }
 
   darkMode() {
-    return this.get("settings.darkMode", false);
+    return this.get("settings.darkMode", true);
   }
 
   leftClickOpensMenu() {

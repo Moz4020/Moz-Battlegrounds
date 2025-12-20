@@ -1,17 +1,11 @@
-import Snowflake3Png from "../../resources/images/Snowflake.webp";
 import version from "../../resources/version.txt";
-import { UserMeResponse } from "../core/ApiSchemas";
 import { EventBus } from "../core/EventBus";
 import { GameRecord, GameStartInfo, ID } from "../core/Schemas";
 import { GameEnv } from "../core/configuration/Config";
 import { getServerConfigFromClient } from "../core/configuration/ConfigLoader";
 import { GameType } from "../core/game/Game";
 import { UserSettings } from "../core/game/UserSettings";
-import "./AccountModal";
-import { getUserMe } from "./Api";
-import { userAuth } from "./Auth";
 import { joinLobby } from "./ClientGameRunner";
-import { fetchCosmetics } from "./Cosmetics";
 import "./DarkModeButton";
 import { DarkModeButton } from "./DarkModeButton";
 import "./FlagInput";
@@ -27,15 +21,8 @@ import { JoinPrivateLobbyModal } from "./JoinPrivateLobbyModal";
 import "./LangSelector";
 import { LangSelector } from "./LangSelector";
 import { LanguageModal } from "./LanguageModal";
-import "./Matchmaking";
-import { MatchmakingModal } from "./Matchmaking";
 import "./NewsModal";
-import "./PublicLobby";
-import { PublicLobby } from "./PublicLobby";
 import { SinglePlayerModal } from "./SinglePlayerModal";
-import "./StatsModal";
-import { TerritoryPatternsModal } from "./TerritoryPatternsModal";
-import { TokenLoginModal } from "./TokenLoginModal";
 import {
   SendKickPlayerIntentEvent,
   SendResetTeamAssignmentsIntentEvent,
@@ -44,10 +31,9 @@ import {
 import { UserSettingModal } from "./UserSettingModal";
 import "./UsernameInput";
 import { UsernameInput } from "./UsernameInput";
-import { incrementGamesPlayed, isInIframe } from "./Utils";
+import { incrementGamesPlayed } from "./Utils";
 import "./components/baseComponents/Button";
 import "./components/baseComponents/Modal";
-import "./snow.css";
 import "./styles.css";
 
 declare global {
@@ -106,11 +92,7 @@ class Client {
   private darkModeButton: DarkModeButton | null = null;
 
   private joinModal: JoinPrivateLobbyModal;
-  private publicLobby: PublicLobby;
   private userSettings: UserSettings = new UserSettings();
-  private patternsModal: TerritoryPatternsModal;
-  private tokenLoginModal: TokenLoginModal;
-  private matchmakingModal: MatchmakingModal;
 
   private gutterAds: GutterAds | null = null;
 
@@ -165,8 +147,6 @@ class Client {
     if (!this.usernameInput) {
       console.warn("Username input element not found");
     }
-
-    this.publicLobby = document.querySelector("public-lobby") as PublicLobby;
 
     window.addEventListener("beforeunload", () => {
       console.log("Browser is closing");
@@ -231,83 +211,6 @@ class Client {
       flagInputModal.open();
     });
 
-    this.patternsModal = document.querySelector(
-      "territory-patterns-modal",
-    ) as TerritoryPatternsModal;
-    if (
-      !this.patternsModal ||
-      !(this.patternsModal instanceof TerritoryPatternsModal)
-    ) {
-      console.warn("Territory patterns modal element not found");
-    }
-    const patternButton = document.getElementById(
-      "territory-patterns-input-preview-button",
-    );
-    if (isInIframe() && patternButton) {
-      patternButton.style.display = "none";
-    }
-
-    if (
-      !this.patternsModal ||
-      !(this.patternsModal instanceof TerritoryPatternsModal)
-    ) {
-      console.warn("Territory patterns modal element not found");
-    }
-    if (patternButton === null)
-      throw new Error("territory-patterns-input-preview-button");
-    this.patternsModal.previewButton = patternButton;
-    this.patternsModal.refresh();
-    patternButton.addEventListener("click", () => {
-      this.patternsModal.open();
-    });
-
-    this.tokenLoginModal = document.querySelector(
-      "token-login",
-    ) as TokenLoginModal;
-    if (
-      !this.tokenLoginModal ||
-      !(this.tokenLoginModal instanceof TokenLoginModal)
-    ) {
-      console.warn("Token login modal element not found");
-    }
-
-    this.matchmakingModal = document.querySelector(
-      "matchmaking-modal",
-    ) as MatchmakingModal;
-    if (
-      !this.matchmakingModal ||
-      !(this.matchmakingModal instanceof MatchmakingModal)
-    ) {
-      console.warn("Matchmaking modal element not found");
-    }
-
-    const onUserMe = async (userMeResponse: UserMeResponse | false) => {
-      document.dispatchEvent(
-        new CustomEvent("userMeResponse", {
-          detail: userMeResponse,
-          bubbles: true,
-          cancelable: true,
-        }),
-      );
-
-      if (userMeResponse !== false) {
-        // Authorized
-        console.log(
-          `Your player ID is ${userMeResponse.player.publicId}\n` +
-            "Sharing this ID will allow others to view your game history and stats.",
-        );
-      }
-    };
-
-    if ((await userAuth()) === false) {
-      // Not logged in
-      onUserMe(false);
-    } else {
-      // JWT appears to be valid
-      // TODO: Add caching
-      getUserMe().then(onUserMe);
-    }
-
     const settingsModal = document.querySelector(
       "user-setting",
     ) as UserSettingModal;
@@ -331,7 +234,6 @@ class Client {
     hostLobbyButton.addEventListener("click", () => {
       if (this.usernameInput?.isValid()) {
         hostModal.open();
-        this.publicLobby.leaveLobby();
       }
     });
 
@@ -413,70 +315,12 @@ class Client {
 
     // Decode the hash first to handle encoded characters
     const decodedHash = decodeURIComponent(hash);
-    const params = new URLSearchParams(decodedHash.split("?")[1] || "");
-
-    // Handle different hash sections
-    if (decodedHash.startsWith("#purchase-completed")) {
-      // Parse params after the ?
-      const status = params.get("status");
-
-      if (status !== "true") {
-        alertAndStrip("purchase failed");
-        return;
-      }
-
-      const patternName = params.get("pattern");
-      if (!patternName) {
-        alert("Something went wrong. Please contact support.");
-        console.error("purchase-completed but no pattern name");
-        return;
-      }
-
-      this.userSettings.setSelectedPatternName(patternName);
-      const token = params.get("login-token");
-
-      if (token) {
-        strip();
-        window.addEventListener("beforeunload", () => {
-          // The page reloads after token login, so we need to save the pattern name
-          // in case it is unset during reload.
-          this.userSettings.setSelectedPatternName(patternName);
-        });
-        this.tokenLoginModal.open(token);
-      } else {
-        alertAndStrip(`purchase succeeded: ${patternName}`);
-        this.patternsModal.refresh();
-      }
-      return;
-    }
-
-    if (decodedHash.startsWith("#token-login")) {
-      const token = params.get("token-login");
-
-      if (!token) {
-        alertAndStrip(
-          `login failed! Please try again later or contact support.`,
-        );
-        return;
-      }
-
-      strip();
-      this.tokenLoginModal.open(token);
-      return;
-    }
 
     if (decodedHash.startsWith("#join=")) {
       const lobbyId = decodedHash.substring(6); // Remove "#join="
       if (lobbyId && ID.safeParse(lobbyId).success) {
         this.joinModal.open(lobbyId);
         console.log(`joining lobby ${lobbyId}`);
-      }
-    }
-    if (decodedHash.startsWith("#affiliate=")) {
-      const affiliateCode = decodedHash.replace("#affiliate=", "");
-      strip();
-      if (affiliateCode) {
-        this.patternsModal.open(affiliateCode);
       }
     }
     if (decodedHash.startsWith("#refresh")) {
@@ -493,10 +337,6 @@ class Client {
     }
     const config = await getServerConfigFromClient();
 
-    const pattern = this.userSettings.getSelectedPatternName(
-      await fetchCosmetics(),
-    );
-
     this.gameStop = joinLobby(
       this.eventBus,
       {
@@ -504,8 +344,6 @@ class Client {
         serverConfig: config,
         cosmetics: {
           color: this.userSettings.getSelectedColor() ?? undefined,
-          patternName: pattern?.name ?? undefined,
-          patternColorPaletteName: pattern?.colorPalette?.name ?? undefined,
           flag:
             this.flagInput === null || this.flagInput.getCurrentFlag() === "xx"
               ? ""
@@ -535,14 +373,9 @@ class Client {
           "game-top-bar",
           "help-modal",
           "user-setting",
-          "territory-patterns-modal",
           "language-modal",
           "news-modal",
           "flag-input-modal",
-          "account-button",
-          "stats-button",
-          "token-login",
-          "matchmaking-modal",
         ].forEach((tag) => {
           const modal = document.querySelector(tag) as HTMLElement & {
             close?: () => void;
@@ -554,13 +387,10 @@ class Client {
             modal.isModalOpen = false;
           }
         });
-        this.publicLobby.stop();
         document.querySelectorAll(".ad").forEach((ad) => {
           (ad as HTMLElement).style.display = "none";
         });
-        // Hide snowflakes when joining lobby
         document.documentElement.classList.add("in-game");
-        removeSnowflakes(); // Stop snowflakes when joining a game
 
         // show when the game loads
         const startingModal = document.querySelector(
@@ -573,7 +403,6 @@ class Client {
       },
       () => {
         this.joinModal.close();
-        this.publicLobby.stop();
         incrementGamesPlayed();
 
         document.querySelectorAll(".ad").forEach((ad) => {
@@ -597,10 +426,7 @@ class Client {
     this.gameStop();
     this.gameStop = null;
     this.gutterAds?.hide();
-    this.publicLobby.leaveLobby();
-    // Show snowflakes when leaving lobby (back to homepage)
     document.documentElement.classList.remove("in-game");
-    enableSnowflakes(); // Restart snowflakes when leaving a game
   }
 
   private handleKickPlayer(event: CustomEvent) {
@@ -686,57 +512,10 @@ class Client {
     }
   }
 }
-function enableSnowflakes() {
-  // Respect user's motion preferences
-  const prefersReducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
-  if (prefersReducedMotion) {
-    return;
-  }
 
-  const snowContainer = document.querySelector(".snow") as HTMLElement;
-  if (!snowContainer) {
-    console.warn("Snow container element not found");
-    return;
-  }
-
-  // Clear existing snowflakes if any
-  removeSnowflakes();
-
-  const isMobile = window.innerWidth <= 768;
-  const numberOfSnowflakes = isMobile ? 30 : 75; // Increased count
-
-  for (let i = 0; i < numberOfSnowflakes; i++) {
-    const snowflake = document.createElement("div");
-    snowflake.classList.add("snowflake");
-    snowflake.style.left = `${Math.random() * 100}vw`; // Random horizontal position
-    snowflake.style.animationDuration = `${Math.random() * 10 + 5}s`; // Random duration between 5-15s
-    snowflake.style.animationDelay = `${Math.random() * -10}s`; // Random delay
-    snowflake.style.opacity = `${Math.random() * 0.5 + 0.5}`; // Random opacity between 0.5-1
-    const size = Math.random() * 20 + 10; // Random size between 10-30px
-    snowflake.style.width = `${size}px`;
-    snowflake.style.height = `${size}px`;
-    snowflake.style.backgroundImage = `url(${Snowflake3Png})`;
-
-    snowContainer.appendChild(snowflake);
-  }
-}
-
-function removeSnowflakes() {
-  const snowContainer = document.querySelector(".snow") as HTMLElement;
-  if (snowContainer) {
-    snowContainer.replaceChildren();
-  }
-}
 // Initialize the client when the DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
   new Client().initialize();
-
-  // Initially enable snowflakes if not in-game
-  if (!document.documentElement.classList.contains("in-game")) {
-    enableSnowflakes();
-  }
 });
 async function getTurnstileToken(): Promise<{
   token: string;
