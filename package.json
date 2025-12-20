@@ -18,7 +18,7 @@
     "format:map-generator": "cd map-generator && go fmt .",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "prepare": "husky",
+    "prepare": "husky || true",
     "gen-maps": "cd map-generator && go run . && npm run format",
     "inst": "npm ci --ignore-scripts"
   },

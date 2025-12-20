@@ -112,7 +112,7 @@ class Client {
   private tokenLoginModal: TokenLoginModal;
   private matchmakingModal: MatchmakingModal;
 
-  private gutterAds: GutterAds;
+  private gutterAds: GutterAds | null = null;
 
   private turnstileTokenPromise: Promise<{
     token: string;
@@ -176,9 +176,9 @@ class Client {
     });
 
     const gutterAds = document.querySelector("gutter-ads");
-    if (!(gutterAds instanceof GutterAds))
-      throw new Error("Missing gutter-ads");
-    this.gutterAds = gutterAds;
+    if (gutterAds instanceof GutterAds) {
+      this.gutterAds = gutterAds;
+    }
 
     document.addEventListener("join-lobby", this.handleJoinLobby.bind(this));
     document.addEventListener("leave-lobby", this.handleLeaveLobby.bind(this));
@@ -569,7 +569,7 @@ class Client {
         if (startingModal && startingModal instanceof GameStartingModal) {
           startingModal.show();
         }
-        this.gutterAds.hide();
+        this.gutterAds?.hide();
       },
       () => {
         this.joinModal.close();
@@ -596,7 +596,7 @@ class Client {
     console.log("leaving lobby, cancelling game");
     this.gameStop();
     this.gameStop = null;
-    this.gutterAds.hide();
+    this.gutterAds?.hide();
     this.publicLobby.leaveLobby();
     // Show snowflakes when leaving lobby (back to homepage)
     document.documentElement.classList.remove("in-game");
