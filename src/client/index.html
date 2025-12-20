@@ -13,6 +13,10 @@
       type="image/x-icon"
       href="../../resources/images/Favicon.svg"
     />
+    <!-- Pixel Font for Logo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
 <!-- SEO -->
     <meta
@@ -107,10 +111,9 @@
       <div class="l-header__content">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 800 180"
+          viewBox="0 0 500 80"
           width="100%"
           height="100%"
-          fill="currentColor"
           class="l-header__logo"
         >
           <defs>
@@ -122,50 +125,30 @@
               y2="0%"
             >
               <stop offset="0%" style="stop-color: #1e5aa8" />
-              <!-- Deep Blue -->
-              <stop offset="100%" style="stop-color: #3498db" />
-              <!-- Light Blue -->
+              <stop offset="50%" style="stop-color: #3498db" />
+              <stop offset="100%" style="stop-color: #e74c3c" />
             </linearGradient>
           </defs>
-          <g fill="url(#logo-gradient)">
-            <!-- Outer frame -->
-            <path d="M0,140V30h10v-12h12v-10h12V0h552v8h12v10h12v12h10v110h-10v12h-12v10h-12v8H46v-8h-12v-10H22v-12H0ZM588,8H46v6h-12v10H22v110h12v10h12v6h542v-6h12v-10h12V24h-12v-10h-12v-6Z"/>
-            <!-- M -->
-            <path d="M50,120V40h20v60h10V40h20v60h10V40h20v80h-20v-40h-10v40h-20v-40h-10v40H50Z"/>
-            <!-- O -->
-            <path d="M140,110v10h-10v-60h-10v-10h10v-10h40v10h10v10h10v60h-10v10h-40v-10h-10Zm10-60v60h20v-60h-20Z"/>
-            <!-- Z -->
-            <path d="M200,120v-20h10v-10h10v-10h10v-10h10V40h-40v20h-20v-20h10v-10h60v10h10v20h-10v10h-10v10h-10v10h-10v10h40v-20h20v20h-10v10h-60v-10h-10Z"/>
-            <!-- B -->
-            <path d="M290,120V40h50v10h10v20h-10v10h10v20h-10v10h10v10h-60Zm20-60v20h20v-20h-20Zm0,40v20h20v-20h-20Z"/>
-            <!-- A -->
-            <path d="M370,120V70h10v-10h10V40h20v20h10v10h10v50h-20v-30h-20v30h-20Zm20-50v10h20v-10h-20Z"/>
-            <!-- T -->
-            <path d="M440,120V60h-20V40h60v20h-20v60h-20Z"/>
-            <!-- T -->
-            <path d="M500,120V60h-20V40h60v20h-20v60h-20Z"/>
-            <!-- L -->
-            <path d="M550,120V40h20v60h30v20h-50Z"/>
-            <!-- E -->
-            <path d="M610,120V40h50v20h-30v10h20v20h-20v10h30v20h-50Z"/>
-          </g>
-          <!-- GROUNDS text (smaller, below) -->
-          <g fill="url(#logo-gradient)" transform="translate(290, 130) scale(0.6)">
-            <!-- G -->
-            <path d="M0,50V10h10V0h40v20h-30v30h20v-10h-10v-10h20v10h10v20h-10v10h-40v-10h-10v-10Z"/>
-            <!-- R -->
-            <path d="M60,60V0h40v10h10v20h-10v10h10v20h-20v-20h-10v20h-20Zm20-40v20h10v-20h-10Z"/>
-            <!-- O -->
-            <path d="M120,50v10h-10v-40h-10v-10h10v-10h30v10h10v10h10v40h-10v10h-30v-10h-10Zm10-40v40h10v-40h-10Z"/>
-            <!-- U -->
-            <path d="M170,60v-10h-10V0h20v40h20V0h20v50h-10v10h-40Z"/>
-            <!-- N -->
-            <path d="M230,60V0h20v30h10V0h20v60h-20v-30h-10v30h-20Z"/>
-            <!-- D -->
-            <path d="M290,60V0h40v10h10v10h10v20h-10v10h-10v10h-40Zm20-40v20h10v-20h-10Z"/>
-            <!-- S -->
-            <path d="M360,60v-10h-10v-10h10V30h10V20h30v-10h-30V0h40v10h10v10h-10v10h-10v10h-30v10h30v10h-40Z"/>
-          </g>
+          <text
+            x="250"
+            y="35"
+            text-anchor="middle"
+            fill="url(#logo-gradient)"
+            font-family="'Press Start 2P', 'Courier New', monospace"
+            font-size="28"
+            font-weight="bold"
+            style="letter-spacing: 2px;"
+          >MOZ</text>
+          <text
+            x="250"
+            y="68"
+            text-anchor="middle"
+            fill="url(#logo-gradient)"
+            font-family="'Press Start 2P', 'Courier New', monospace"
+            font-size="18"
+            font-weight="bold"
+            style="letter-spacing: 1px;"
+          >BATTLEGROUNDS</text>
         </svg>
         <div id="game-version" class="l-header__highlightText text-center">
           Loading version...
