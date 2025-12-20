@@ -11,27 +11,6 @@ const PERSISTENT_ID_KEY = "player_persistent_id";
 
 let __jwt: string | null = null;
 
-export function discordLogin() {
-  const redirectUri = encodeURIComponent(window.location.href);
-  window.location.href = `${getApiBase()}/auth/login/discord?redirect_uri=${redirectUri}`;
-}
-
-export async function tempTokenLogin(token: string): Promise<string | null> {
-  const response = await fetch(
-    `${getApiBase()}/auth/login/token?login-token=${token}`,
-    {
-      credentials: "include",
-    },
-  );
-  if (response.status !== 200) {
-    console.error("Token login failed", response);
-    return null;
-  }
-  const json = await response.json();
-  const { email } = json;
-  return email;
-}
-
 export async function getAuthHeader(): Promise<string> {
   const userAuthResult = await userAuth();
   if (!userAuthResult) return "";
@@ -64,11 +43,6 @@ export async function logOut(allSessions: boolean = false): Promise<boolean> {
   }
 }
 
-export async function isLoggedIn(): Promise<boolean> {
-  const userAuthResult = await userAuth();
-  return userAuthResult !== false;
-}
-
 export async function userAuth(
   shouldRefresh: boolean = true,
 ): Promise<UserAuth> {
@@ -84,27 +58,16 @@ export async function userAuth(
       return userAuth(false);
     }
 
-    // Verify the JWT (requires browser support)
-    // const jwks = createRemoteJWKSet(
-    //   new URL(getApiBase() + "/.well-known/jwks.json"),
-    // );
-    // const { payload, protectedHeader } = await jwtVerify(token, jwks, {
-    //   issuer: getApiBase(),
-    //   audience: getAudience(),
-    // });
-
     const payload = decodeJwt(jwt);
     const { iss, aud, exp } = payload;
 
     if (iss !== getApiBase()) {
-      // JWT was not issued by the correct server
       console.error('unexpected "iss" claim value');
       logOut();
       return false;
     }
     const myAud = getAudience();
     if (myAud !== "localhost" && aud !== myAud) {
-      // JWT was not issued for this website
       console.error('unexpected "aud" claim value');
       logOut();
       return false;
@@ -117,8 +80,6 @@ export async function userAuth(
         return false;
       }
       await refreshJwt();
-
-      // Try to get login info again after refreshing
       return userAuth(false);
     }
 
@@ -155,40 +116,8 @@ async function refreshJwt(): Promise<void> {
     __jwt = jwt;
   } catch (e) {
     console.error("Refresh failed", e);
-    // if server unreachable, just clear jwt
     __jwt = null;
     return;
-  }
-}
-
-export async function sendMagicLink(email: string): Promise<boolean> {
-  try {
-    const apiBase = getApiBase();
-    const response = await fetch(`${apiBase}/auth/magic-link`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        redirectDomain: window.location.origin,
-        email: email,
-      }),
-    });
-
-    if (response.ok) {
-      return true;
-    } else {
-      console.error(
-        "Failed to send recovery email:",
-        response.status,
-        response.statusText,
-      );
-      return false;
-    }
-  } catch (error) {
-    console.error("Error sending recovery email:", error);
-    return false;
   }
 }
 
@@ -211,11 +140,9 @@ export function getPersistentID(): string {
 
 // WARNING: DO NOT EXPOSE THIS ID
 function getPersistentIDFromLocalStorage(): string {
-  // Try to get existing localStorage
   const value = localStorage.getItem(PERSISTENT_ID_KEY);
   if (value) return value;
 
-  // If no localStorage exists, create new ID and set localStorage
   const newID = generateCryptoRandomUUID();
   localStorage.setItem(PERSISTENT_ID_KEY, newID);
 
