@@ -72,7 +72,7 @@ export class NewsModal extends LitElement {
   render() {
     return html`
       <o-modal title=${translateText("news.title")}>
-        <div class="options-layout">
+<div class="options-layout">
           <div class="options-section">
             <div class="news-container">
               <div class="news-content">
@@ -83,15 +83,6 @@ export class NewsModal extends LitElement {
               </div>
             </div>
           </div>
-        </div>
-
-        <div>
-          ${translateText("news.see_all_releases")}
-          <a
-            href="https://github.com/openfrontio/OpenFrontIO/releases"
-            target="_blank"
-            >${translateText("news.github_link")}</a
-          >.
         </div>
 
         <o-button

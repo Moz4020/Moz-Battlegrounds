@@ -145,11 +145,11 @@ export class WinModal extends LitElement implements Layer {
     `;
   }
 
-  renderPatternButton() {
+renderPatternButton() {
     return html`
       <div class="text-center mb-6 bg-black/30 p-2.5 rounded">
         <h3 class="text-xl font-semibold text-white mb-3">
-          ${translateText("win_modal.support_openfront")}
+          Thanks for playing!
         </h3>
         <p class="text-white mb-3">
           ${translateText("win_modal.territory_pattern")}
@@ -238,7 +238,7 @@ export class WinModal extends LitElement implements Layer {
         <div class="mb-3">
           <img
             src=${ofmWintersLogo}
-            alt="OpenFront Masters Winter"
+            alt="Moz Battlegrounds Tournament"
             class="mx-auto max-w-full h-auto max-h-[200px] rounded"
           />
         </div>

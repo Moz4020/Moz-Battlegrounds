@@ -5,6 +5,7 @@ import { DefaultConfig } from "./DefaultConfig";
 import { DevConfig, DevServerConfig } from "./DevConfig";
 import { preprodConfig } from "./PreprodConfig";
 import { prodConfig } from "./ProdConfig";
+import { renderConfig } from "./RenderConfig";
 
 export let cachedSC: ServerConfig | null = null;
 
@@ -58,6 +59,9 @@ export function getServerConfig(gameEnv: string) {
     case "prod":
       console.log("using prod server config");
       return prodConfig;
+    case "render":
+      console.log("using render server config");
+      return renderConfig;
     default:
       throw Error(`unsupported server configuration: ${gameEnv}`);
   }

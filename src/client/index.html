@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no"
     />
-    <title>OpenFront (ALPHA)</title>
+    <title>Moz Battlegrounds</title>
     <link rel="manifest" href="../../resources/manifest.json" />
     <link
       rel="icon"
@@ -14,23 +14,17 @@
       href="../../resources/images/Favicon.svg"
     />
 
-    <!-- SEO -->
-    <link rel="canonical" href="https://openfront.io/" />
+<!-- SEO -->
     <meta
       name="description"
       content="Conquer the world in this multiplayer battle royale! Expand your nation, eliminate opponents, and dominate the map in this fast-paced IO game."
     />
 
     <!-- Open Graph -->
-    <meta property="og:url" content="https://openfront.io/" />
-    <meta property="og:title" content="OpenFront - Battle Royale" />
+    <meta property="og:title" content="Moz Battlegrounds" />
     <meta
       property="og:description"
       content="Conquer the world in this multiplayer battle royale! Expand your nation, eliminate opponents, and dominate the map in this fast-paced IO game."
-    />
-    <meta
-      property="og:image"
-      content="https://openfront.io/images/GameplayScreenshot.png"
     />
     <meta property="og:type" content="game" />
 
@@ -130,55 +124,12 @@
       document.documentElement.className = "preload";
     </script>
 
-    <!-- Cloudflare Turnstile -->
+<!-- Cloudflare Turnstile -->
     <script
       src="https://challenges.cloudflare.com/turnstile/v0/api.js"
       async
       defer
     ></script>
-
-    <!-- Publift/Fuse ads -->
-    <script
-      async
-      src="https://cdn.fuseplatform.net/publift/tags/2/4121/fuse.js"
-    ></script>
-
-    <script>
-      window.googletag = window.googletag || { cmd: [] };
-      googletag.cmd.push(function () {
-        googletag.pubads().set("page_url", "http://openfront.io ");
-      });
-    </script>
-
-    <!-- Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=AW-16702609763"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-
-      gtag("js", new Date());
-      gtag("config", "AW-16702609763");
-    </script>
-    <!-- Google tag (gtag.js) -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-WQGQQ8RDN4"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "G-WQGQQ8RDN4");
-    </script>
   </head>
 
   <body
@@ -250,12 +201,11 @@
         </div>
       </div>
     </header>
-    <div class="bg-image"></div>
+<div class="bg-image"></div>
     <div
       id="turnstile-container"
       class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999]"
     ></div>
-    <gutter-ads></gutter-ads>
 
     <!-- Main container with responsive padding -->
     <main class="flex justify-center flex-grow">
@@ -369,54 +319,17 @@
       </div>
     </div>
 
-    <!-- Footer section -->
+<!-- Footer section -->
     <footer
       class="flex justify-center px-3 py-3 md:px-6 md:py-3 bg-[var(--boxBackgroundColor)] backdrop-blur-sm"
     >
       <div
         class="flex flex-col md:flex-row flex-nowrap justify-between items-center gap-4 md:gap-0 w-full max-w-[860px] flex-1"
       >
-        <div
-          class="flex flex-col sm:flex-row gap-4 sm:gap-5 text-white/70 justify-center md:justify-start flex-shrink-0"
-        >
-          <a
-            href="https://openfront.wiki/Main_Page"
-            data-i18n="main.wiki"
-            class="text-white/70 hover:text-white transition-colors duration-300 ease-in-out whitespace-nowrap"
-            target="_blank"
-          >
-            Wiki
-          </a>
-          <a
-            target="_blank"
-            href="https://www.reddit.com/r/Openfront/"
-            class="text-white/70 hover:text-white transition-colors duration-300 ease-in-out whitespace-nowrap"
-          >
-            <span data-i18n="main.reddit"> Reddit </span>
-          </a>
-          <a
-            target="_blank"
-            href="https://discord.gg/jRpxXvG42t"
-            class="text-white/70 hover:text-white transition-colors duration-300 ease-in-out whitespace-nowrap"
-          >
-            <span data-i18n="main.join_discord"> Discord </span>
-          </a>
-        </div>
         <div class="flex justify-center text-white/70 flex-shrink-0">
-          <a
-            href="https://github.com/openfrontio/OpenFrontIO"
-            class="text-white/70 hover:text-white transition-colors duration-300 ease-in-out inline-flex items-center gap-2 whitespace-nowrap"
-            target="_blank"
-          >
-            © OpenFront™ and Contributors
-            <img
-              src="../../resources/icons/github-mark-white.svg"
-              alt="GitHub"
-              width="20"
-              height="20"
-              class="ml-2"
-            />
-          </a>
+          <span class="text-white/70">
+            © Moz Battlegrounds
+          </span>
         </div>
         <div
           class="flex flex-col sm:flex-row gap-4 sm:gap-4 text-white/70 justify-center md:justify-end flex-shrink-0"
@@ -487,7 +400,7 @@
         </button>
       </div>
     </div>
-    <!-- Scripts -->
+<!-- Scripts -->
     <script>
       // Remove preload class after everything is loaded
       window.addEventListener("load", function () {
@@ -496,12 +409,5 @@
         });
       });
     </script>
-
-    <!-- Analytics -->
-    <script
-      defer
-      src="https://static.cloudflareinsights.com/beacon.min.js"
-      data-cf-beacon='{"token": "03d93e6fefb349c28ee69b408fa25a13"}'
-    ></script>
   </body>
 </html>

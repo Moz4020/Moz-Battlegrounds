@@ -128,17 +128,11 @@ export class GameStartingModal extends LitElement {
     }
   `;
 
-  render() {
+render() {
     return html`
       <div class="overlay ${this.isVisible ? "visible" : ""}"></div>
       <div class="modal ${this.isVisible ? "visible" : ""}">
-        <div class="copyright">© OpenFront and Contributors</div>
-        <a
-          href="https://github.com/openfrontio/OpenFrontIO/blob/main/CREDITS.md"
-          target="_blank"
-          rel="noopener noreferrer"
-          >${translateText("game_starting_modal.credits")}</a
-        >
+        <div class="copyright">© Moz Battlegrounds</div>
         <p>${translateText("game_starting_modal.code_license")}</p>
         <p class="loading">${translateText("game_starting_modal.title")}</p>
       </div>

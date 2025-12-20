@@ -14,7 +14,9 @@ const config = getServerConfigFromServer();
 async function main() {
   // Check if this is the primary (master) process
   if (cluster.isPrimary) {
-    if (config.env() !== GameEnv.Dev) {
+    // Skip Cloudflare tunnels for dev mode and Render deployment
+    const isRender = process.env.GAME_ENV === "render";
+    if (config.env() !== GameEnv.Dev && !isRender) {
       await setupTunnels();
     }
     console.log("Starting master process...");
