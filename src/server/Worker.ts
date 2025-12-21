@@ -13,12 +13,10 @@ import {
   ClientMessageSchema,
   GameID,
   ID,
-  PartialGameRecordSchema,
   ServerErrorMessage,
 } from "../core/Schemas";
 import { generateID, replacer } from "../core/Util";
 import { CreateGameInputSchema, GameInputSchema } from "../core/WorkerSchemas";
-import { archive, finalizeGameRecord } from "./Archive";
 import { Client } from "./Client";
 import { GameManager } from "./GameManager";
 import { getUserMe, verifyClientToken } from "./jwt";
@@ -222,49 +220,6 @@ export async function startWorker() {
       return res.status(404).json({ error: "Game not found" });
     }
     res.json(game.gameInfo());
-  });
-
-  app.post("/api/archive_singleplayer_game", async (req, res) => {
-    try {
-      const record = req.body;
-
-      const result = PartialGameRecordSchema.safeParse(record);
-      if (!result.success) {
-        const error = z.prettifyError(result.error);
-        log.info(error);
-        return res.status(400).json({ error });
-      }
-      const gameRecord = result.data;
-
-      if (gameRecord.info.config.gameType !== GameType.Singleplayer) {
-        log.warn(
-          `cannot archive singleplayer with game type ${gameRecord.info.config.gameType}`,
-          {
-            gameID: gameRecord.info.gameID,
-          },
-        );
-        return res.status(400).json({ error: "Invalid request" });
-      }
-
-      if (result.data.info.players.length !== 1) {
-        log.warn(`cannot archive singleplayer game multiple players`, {
-          gameID: gameRecord.info.gameID,
-        });
-        return res.status(400).json({ error: "Invalid request" });
-      }
-
-      log.info("archiving singleplayer game", {
-        gameID: gameRecord.info.gameID,
-      });
-
-      archive(finalizeGameRecord(gameRecord));
-      res.json({
-        success: true,
-      });
-    } catch (error) {
-      log.error("Error processing archive request:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
   });
 
   app.post("/api/kick_player/:gameID/:clientID", async (req, res) => {

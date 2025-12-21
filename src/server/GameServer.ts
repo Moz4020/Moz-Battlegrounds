@@ -14,7 +14,6 @@ import {
   GameStartInfo,
   GameStartInfoSchema,
   Intent,
-  PlayerRecord,
   ServerDesyncSchema,
   ServerErrorMessage,
   ServerPrestartMessageSchema,
@@ -22,8 +21,6 @@ import {
   ServerTurnMessage,
   Turn,
 } from "../core/Schemas";
-import { createPartialGameRecord, getClanTag } from "../core/Util";
-import { archive, finalizeGameRecord } from "./Archive";
 import { Client } from "./Client";
 export enum GamePhase {
   Lobby = "LOBBY",
@@ -821,43 +818,11 @@ export class GameServer {
   }
 
   private archiveGame() {
-    this.log.info("archiving game", {
+    // Archive storage disabled - no-op
+    this.log.info("game ended (archive storage disabled)", {
       gameID: this.id,
       winner: this.winner?.winner,
     });
-
-    // Players must stay in the same order as the game start info.
-    const playerRecords: PlayerRecord[] = this.gameStartInfo.players.map(
-      (player) => {
-        const stats = this.winner?.allPlayersStats[player.clientID];
-        if (stats === undefined) {
-          this.log.warn(`Unable to find stats for clientID ${player.clientID}`);
-        }
-        return {
-          clientID: player.clientID,
-          username: player.username,
-          persistentID:
-            this.allClients.get(player.clientID)?.persistentID ?? "",
-          stats,
-          cosmetics: player.cosmetics,
-          clanTag: getClanTag(player.username) ?? undefined,
-        } satisfies PlayerRecord;
-      },
-    );
-    archive(
-      finalizeGameRecord(
-        createPartialGameRecord(
-          this.id,
-          this.gameStartInfo.config,
-          playerRecords,
-          this.turns,
-          this._startTime ?? 0,
-          Date.now(),
-          this.winner?.winner,
-          this.createdAt,
-        ),
-      ),
-    );
   }
 
   private handleSynchronization() {

@@ -11,12 +11,3 @@ services:
         value: render
       - key: NODE_ENV
         value: production
-      # Cloudflare R2 for replay storage (add values in Render dashboard)
-      - key: CF_ACCOUNT_ID
-        sync: false
-      - key: R2_ACCESS_KEY
-        sync: false
-      - key: R2_SECRET_KEY
-        sync: false
-      - key: R2_BUCKET
-        sync: false

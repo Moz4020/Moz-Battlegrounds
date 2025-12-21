@@ -1,23 +1,16 @@
-import { z } from "zod";
 import { EventBus } from "../core/EventBus";
 import {
   AllPlayersStats,
   ClientMessage,
   ClientSendWinnerMessage,
   Intent,
-  PartialGameRecordSchema,
-  PlayerRecord,
   ServerMessage,
   ServerStartGameMessage,
   Turn,
 } from "../core/Schemas";
 import {
-  createPartialGameRecord,
   decompressGameRecord,
-  getClanTag,
-  replacer,
 } from "../core/Util";
-import { getPersistentID } from "./Auth";
 import { LobbyConfig } from "./ClientGameRunner";
 import { ReplaySpeedChangeEvent } from "./InputHandler";
 import { defaultReplaySpeedMultiplier } from "./utilities/ReplaySpeedMultiplier";
@@ -200,90 +193,6 @@ export class LocalServer {
   public endGame() {
     console.log("local server ending game");
     clearInterval(this.turnCheckInterval);
-    if (this.isReplay) {
-      return;
-    }
-    const players: PlayerRecord[] = [
-      {
-        persistentID: getPersistentID(),
-        username: this.lobbyConfig.playerName,
-        clientID: this.lobbyConfig.clientID,
-        stats: this.allPlayersStats[this.lobbyConfig.clientID],
-        cosmetics: this.lobbyConfig.gameStartInfo?.players[0].cosmetics,
-        clanTag: getClanTag(this.lobbyConfig.playerName) ?? undefined,
-      },
-    ];
-    if (this.lobbyConfig.gameStartInfo === undefined) {
-      throw new Error("missing gameStartInfo");
-    }
-    const record = createPartialGameRecord(
-      this.lobbyConfig.gameStartInfo.gameID,
-      this.lobbyConfig.gameStartInfo.config,
-      players,
-      this.turns,
-      this.startedAt,
-      Date.now(),
-      this.winner?.winner,
-    );
-
-    const result = PartialGameRecordSchema.safeParse(record);
-    if (!result.success) {
-      const error = z.prettifyError(result.error);
-      console.error("Error parsing game record", error);
-      return;
-    }
-    const workerPath = this.lobbyConfig.serverConfig.workerPath(
-      this.lobbyConfig.gameStartInfo.gameID,
-    );
-
-    const jsonString = JSON.stringify(result.data, replacer);
-
-    compress(jsonString)
-      .then((compressedData) => {
-        return fetch(`/${workerPath}/api/archive_singleplayer_game`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Content-Encoding": "gzip",
-          },
-          body: compressedData,
-          keepalive: true, // Ensures request completes even if page unloads
-        });
-      })
-      .catch((error) => {
-        console.error("Failed to archive singleplayer game:", error);
-      });
+    // Archive storage disabled - no-op
   }
-}
-
-async function compress(data: string): Promise<ArrayBuffer> {
-  const stream = new CompressionStream("gzip");
-  const writer = stream.writable.getWriter();
-  const reader = stream.readable.getReader();
-
-  // Write the data to the compression stream
-  writer.write(new TextEncoder().encode(data));
-  writer.close();
-
-  // Read the compressed data
-  const chunks: Uint8Array[] = [];
-  let done = false;
-  while (!done) {
-    const { value, done: readerDone } = await reader.read();
-    done = readerDone;
-    if (value) {
-      chunks.push(value);
-    }
-  }
-
-  // Combine all chunks into a single Uint8Array
-  const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
-  const compressedData = new Uint8Array(totalLength);
-  let offset = 0;
-  for (const chunk of chunks) {
-    compressedData.set(chunk, offset);
-    offset += chunk.length;
-  }
-
-  return compressedData.buffer;
 }
