@@ -183,6 +183,15 @@ export class LobbyTeamView extends LitElement {
       return;
     }
 
+    // Also pin existing players on the target team to prevent them from being redistributed
+    if (currentTeamPlayers) {
+      for (const player of currentTeamPlayers) {
+        if (!(player.clientID in this.manualAssignments)) {
+          this.onSwapTeam?.(player.clientID, team);
+        }
+      }
+    }
+
     this.onSwapTeam?.(this.draggedClientID, team);
     this.draggedClientID = null;
     this.dragOverTeam = null;
@@ -234,6 +243,14 @@ export class LobbyTeamView extends LitElement {
           !currentTeamPlayers ||
           currentTeamPlayers.length < this.teamMaxSize
         ) {
+          // Also pin existing players on the target team to prevent them from being redistributed
+          if (currentTeamPlayers) {
+            for (const player of currentTeamPlayers) {
+              if (!(player.clientID in this.manualAssignments)) {
+                this.onSwapTeam?.(player.clientID, team);
+              }
+            }
+          }
           this.onSwapTeam?.(this.draggedClientID, team);
         }
       }
@@ -349,7 +366,9 @@ export class LobbyTeamView extends LitElement {
               this.onKickPlayer?.(player.clientID);
             }}
               >
-                ×
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L7 7M7 1L1 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
               </button>`
           : ""}
       </div>
