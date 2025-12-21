@@ -5,9 +5,9 @@ import { GameID } from "../Schemas";
 import { simpleHash } from "../Util";
 import { SpawnExecution } from "./SpawnExecution";
 import {
-  COMMUNITY_FULL_ELF_NAMES,
+  COMMUNITY_BOT_NAMES,
   COMMUNITY_PREFIXES,
-  SPECIAL_FULL_ELF_NAMES,
+  SPECIAL_BOT_NAMES,
 } from "./utils/BotNames";
 
 export class BotSpawner {
@@ -66,36 +66,36 @@ export class BotSpawner {
   } {
     if (this.bots.length < 20) {
       //first few usually overwritten by Nation spawn
-      return { name: this.getRandomElf(), source: "random" };
+      return { name: this.getRandomBot(), source: "random" };
     }
 
-    if (this.nameIndex < COMMUNITY_FULL_ELF_NAMES.length) {
+    if (this.nameIndex < COMMUNITY_BOT_NAMES.length) {
       return {
-        name: COMMUNITY_FULL_ELF_NAMES[this.nameIndex],
+        name: COMMUNITY_BOT_NAMES[this.nameIndex],
         source: "list",
       };
     }
-    const specialOffset = COMMUNITY_FULL_ELF_NAMES.length;
-    if (this.nameIndex < specialOffset + SPECIAL_FULL_ELF_NAMES.length) {
+    const specialOffset = COMMUNITY_BOT_NAMES.length;
+    if (this.nameIndex < specialOffset + SPECIAL_BOT_NAMES.length) {
       return {
-        name: SPECIAL_FULL_ELF_NAMES[this.nameIndex - specialOffset],
+        name: SPECIAL_BOT_NAMES[this.nameIndex - specialOffset],
         source: "list",
       };
     }
-    const prefixOffset = specialOffset + SPECIAL_FULL_ELF_NAMES.length;
+    const prefixOffset = specialOffset + SPECIAL_BOT_NAMES.length;
     if (this.nameIndex < prefixOffset + COMMUNITY_PREFIXES.length) {
       return {
-        name: `${COMMUNITY_PREFIXES[this.nameIndex - prefixOffset]} the Elf`,
+        name: `${COMMUNITY_PREFIXES[this.nameIndex - prefixOffset]}`,
         source: "list",
       };
     }
 
-    return { name: this.getRandomElf(), source: "random" };
+    return { name: this.getRandomBot(), source: "random" };
   }
 
-  private getRandomElf(): string {
+  private getRandomBot(): string {
     const suffixNumber = this.random.nextInt(1, 10001);
-    return `Elf ${suffixNumber}`;
+    return `Bot ${suffixNumber}`;
   }
 
   private randTile(): TileRef {

@@ -3,9 +3,9 @@
   "nations": [
     {
       "coordinates": [900, 850],
-      "name": "Santa Claus",
+      "name": "North Pole",
       "strength": 2,
-      "flag": "santa_claus"
+      "flag": "no"
     },
     {
       "coordinates": [275, 525],

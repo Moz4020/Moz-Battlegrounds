@@ -314,7 +314,7 @@ export class FxLayer implements Layer {
         this.animatedSpriteLoader,
         x,
         y,
-        FxType.Sparks,
+        FxType.MiniExplosion,
       );
       this.allFx.push(sparks);
     }

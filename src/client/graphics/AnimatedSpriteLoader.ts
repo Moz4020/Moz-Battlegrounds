@@ -1,6 +1,5 @@
 import miniBigSmoke from "../../../resources/sprites/bigsmoke.png";
 import buildingExplosion from "../../../resources/sprites/buildingExplosion.png";
-import sparks from "../../../resources/sprites/christmas/sparks.png";
 import conquestSword from "../../../resources/sprites/conquestSword.png";
 import dust from "../../../resources/sprites/dust.png";
 import miniExplosion from "../../../resources/sprites/miniExplosion.png";
@@ -135,15 +134,6 @@ const ANIMATED_SPRITE_CONFIG: Partial<Record<FxType, AnimatedSpriteConfig>> = {
     looping: false,
     originX: 10,
     originY: 16,
-  },
-  [FxType.Sparks]: {
-    url: sparks,
-    frameWidth: 13,
-    frameCount: 13,
-    frameDuration: 60,
-    looping: false,
-    originX: 6,
-    originY: 6,
   },
 };
 

@@ -18,8 +18,8 @@
   "nations": [
     {
       "coordinates": [900, 850],
-      "flag": "santa_claus",
-      "name": "Santa Claus",
+      "flag": "no",
+      "name": "North Pole",
       "strength": 2
     },
     {
