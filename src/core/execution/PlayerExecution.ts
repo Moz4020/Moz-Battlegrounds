@@ -86,10 +86,13 @@ export class PlayerExecution implements Execution {
     // Record stats
     this.mg.stats().goldWork(this.player, goldFromWorkers);
 
-    const alliances = Array.from(this.player.alliances());
-    for (const alliance of alliances) {
-      if (alliance.expiresAt() <= this.mg.ticks()) {
-        alliance.expire();
+    // Skip alliance expiration if permanentAllies is enabled
+    if (!this.mg.config().permanentAllies()) {
+      const alliances = Array.from(this.player.alliances());
+      for (const alliance of alliances) {
+        if (alliance.expiresAt() <= this.mg.ticks()) {
+          alliance.expire();
+        }
       }
     }
 

@@ -233,10 +233,6 @@ export class AiAttackBehavior {
         return 2;
       case Difficulty.Hard:
         return 4;
-      // On impossible difficulty, attack as much bots as possible in parallel
-      case Difficulty.Impossible: {
-        return 100;
-      }
       default:
         assertNever(difficulty);
     }

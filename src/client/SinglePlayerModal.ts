@@ -45,6 +45,8 @@ export class SinglePlayerModal extends LitElement {
   @state() private maxTimerValue: number | undefined = undefined;
   @state() private instantBuild: boolean = false;
   @state() private randomSpawn: boolean = false;
+  @state() private freeNukes: boolean = false;
+  @state() private permanentAllies: boolean = false;
   @state() private useRandomMap: boolean = false;
   @state() private gameMode: GameMode = GameMode.FFA;
   @state() private teamCount: TeamCountConfig = 2;
@@ -254,6 +256,8 @@ export class SinglePlayerModal extends LitElement {
               ${this.renderToggle("singleplayer-modal-random-spawn", this.randomSpawn, translateText("single_modal.random_spawn"), this.handleRandomSpawnChange)}
               ${this.renderToggle("singleplayer-modal-infinite-gold", this.infiniteGold, translateText("single_modal.infinite_gold"), this.handleInfiniteGoldChange)}
               ${this.renderToggle("singleplayer-modal-infinite-troops", this.infiniteTroops, translateText("single_modal.infinite_troops"), this.handleInfiniteTroopsChange)}
+              ${this.renderToggle("singleplayer-modal-free-nukes", this.freeNukes, translateText("single_modal.free_nukes"), this.handleFreeNukesChange)}
+              ${this.renderToggle("singleplayer-modal-permanent-allies", this.permanentAllies, translateText("single_modal.permanent_allies"), this.handlePermanentAlliesChange)}
               ${this.renderToggle("singleplayer-modal-compact-map", this.compactMap, translateText("single_modal.compact_map"), this.handleCompactMapChange)}
               
               <label class="option-toggle ${this.maxTimer ? "selected" : ""}" for="max-timer">
@@ -344,6 +348,14 @@ export class SinglePlayerModal extends LitElement {
 
   private handleInfiniteTroopsChange(e: Event) {
     this.infiniteTroops = Boolean((e.target as HTMLInputElement).checked);
+  }
+
+  private handleFreeNukesChange(e: Event) {
+    this.freeNukes = Boolean((e.target as HTMLInputElement).checked);
+  }
+
+  private handlePermanentAlliesChange(e: Event) {
+    this.permanentAllies = Boolean((e.target as HTMLInputElement).checked);
   }
 
   private handleCompactMapChange(e: Event) {
@@ -462,6 +474,8 @@ export class SinglePlayerModal extends LitElement {
               infiniteTroops: this.infiniteTroops,
               instantBuild: this.instantBuild,
               randomSpawn: this.randomSpawn,
+              freeNukes: this.freeNukes,
+              permanentAllies: this.permanentAllies,
               disabledUnits: this.disabledUnits
                 .map((u) => Object.values(UnitType).find((ut) => ut === u))
                 .filter((ut): ut is UnitType => ut !== undefined),

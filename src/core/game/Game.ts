@@ -43,7 +43,6 @@ export enum Difficulty {
   Easy = "Easy",
   Medium = "Medium",
   Hard = "Hard",
-  Impossible = "Impossible",
 }
 export const isDifficulty = (value: unknown): value is Difficulty =>
   isEnumValue(Difficulty, value);

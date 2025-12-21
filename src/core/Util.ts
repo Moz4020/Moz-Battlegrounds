@@ -12,10 +12,7 @@ import {
   Winner,
 } from "./Schemas";
 
-import {
-  BOT_NAME_PREFIXES,
-  BOT_NAME_SUFFIXES,
-} from "./execution/utils/BotNames";
+import { BOT_NAMES } from "./execution/utils/BotNames";
 
 export function manhattanDistWrapped(
   c1: Cell,
@@ -295,11 +292,8 @@ export function createRandomName(
   let randomName: string | null = null;
   if (playerType === "HUMAN") {
     const hash = simpleHash(name);
-    const prefixIndex = hash % BOT_NAME_PREFIXES.length;
-    const suffixIndex =
-      Math.floor(hash / BOT_NAME_PREFIXES.length) % BOT_NAME_SUFFIXES.length;
-
-    randomName = `👤 ${BOT_NAME_PREFIXES[prefixIndex]} ${BOT_NAME_SUFFIXES[suffixIndex]}`;
+    const nameIndex = hash % BOT_NAMES.length;
+    randomName = `👤 ${BOT_NAMES[nameIndex]}`;
   }
   return randomName;
 }

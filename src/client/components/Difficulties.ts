@@ -123,10 +123,6 @@ export class DifficultyDisplay extends LitElement {
           <div class="difficulty-skull active">${skull}</div>
           <div class="difficulty-skull active">${skull}</div>
         `;
-      case "Impossible":
-        return html`
-          <div class="difficulty-skull big active">${burningSkull}</div>
-        `;
       default:
         return html`<div class="difficulty-skull big active">
           ${questionMark}

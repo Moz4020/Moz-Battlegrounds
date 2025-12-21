@@ -1,4 +1,3 @@
-import version from "../../resources/version.txt";
 import { EventBus } from "../core/EventBus";
 import { GameRecord, GameStartInfo, ID } from "../core/Schemas";
 import { GameEnv } from "../core/configuration/Config";
@@ -105,14 +104,6 @@ class Client {
     // Prefetch turnstile token so it is available when
     // the user joins a lobby.
     this.turnstileTokenPromise = getTurnstileToken();
-
-    const gameVersion = document.getElementById(
-      "game-version",
-    ) as HTMLDivElement;
-    if (!gameVersion) {
-      console.warn("Game version element not found");
-    }
-    gameVersion.innerText = version;
 
     const langSelector = document.querySelector(
       "lang-selector",

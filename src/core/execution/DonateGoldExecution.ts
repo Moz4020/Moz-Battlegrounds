@@ -66,8 +66,6 @@ export class DonateGoldExecution implements Execution {
         return 5_000;
       case Difficulty.Hard:
         return 12_500;
-      case Difficulty.Impossible:
-        return 25_000;
       default:
         assertNever(difficulty);
     }

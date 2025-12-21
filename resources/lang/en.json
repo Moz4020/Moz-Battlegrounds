@@ -147,6 +147,8 @@
     "compact_map": "Compact Map",
     "max_timer": "Game length (minutes)",
     "disable_nukes": "Disable Nukes",
+    "free_nukes": "Free Nukes",
+    "permanent_allies": "Permanent Allies",
     "enables_title": "Enable Settings",
     "start": "Start Game"
   },
@@ -311,6 +313,8 @@
     "nation_player": "Nation",
     "waiting": "Waiting for players...",
     "random_spawn": "Random spawn",
+    "free_nukes": "Free Nukes",
+    "permanent_allies": "Permanent Allies",
     "start": "Start Game",
     "host_badge": "Host",
     "assigned_teams": "Assigned Teams",
@@ -343,8 +347,7 @@
     "difficulty": "Difficulty",
     "Easy": "Relaxed",
     "Medium": "Balanced",
-    "Hard": "Intense",
-    "Impossible": "Impossible"
+    "Hard": "Intense"
   },
   "game_mode": {
     "ffa": "Free for All",

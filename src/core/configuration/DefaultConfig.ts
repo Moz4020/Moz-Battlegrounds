@@ -336,6 +336,12 @@ export class DefaultConfig implements Config {
   isRandomSpawn(): boolean {
     return this._gameConfig.randomSpawn;
   }
+  freeNukes(): boolean {
+    return this._gameConfig.freeNukes;
+  }
+  permanentAllies(): boolean {
+    return this._gameConfig.permanentAllies;
+  }
   infiniteGold(): boolean {
     return this._gameConfig.infiniteGold;
   }
@@ -465,7 +471,15 @@ export class DefaultConfig implements Config {
         };
       case UnitType.AtomBomb:
         return {
-          cost: this.costWrapper(() => 750_000, UnitType.AtomBomb),
+          cost: (game: Game, player: Player) => {
+            if (player.type() === PlayerType.Human && this.freeNukes()) {
+              return 0n;
+            }
+            return this.costWrapper(() => 750_000, UnitType.AtomBomb)(
+              game,
+              player,
+            );
+          },
           territoryBound: false,
         };
       case UnitType.HydrogenBomb:
@@ -825,8 +839,6 @@ export class DefaultConfig implements Config {
           return 25_000 * strength; // Like humans
         case Difficulty.Hard:
           return 31_250 * strength;
-        case Difficulty.Impossible:
-          return 37_500 * strength;
         default:
           assertNever(this._gameConfig.difficulty);
       }
@@ -860,8 +872,6 @@ export class DefaultConfig implements Config {
         return maxTroops * 1; // Like humans
       case Difficulty.Hard:
         return maxTroops * 1.25;
-      case Difficulty.Impossible:
-        return maxTroops * 1.5;
       default:
         assertNever(this._gameConfig.difficulty);
     }
@@ -889,9 +899,6 @@ export class DefaultConfig implements Config {
           break;
         case Difficulty.Hard:
           toAdd *= 1.05;
-          break;
-        case Difficulty.Impossible:
-          toAdd *= 1.1;
           break;
         default:
           assertNever(this._gameConfig.difficulty);

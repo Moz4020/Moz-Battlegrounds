@@ -33,6 +33,8 @@ describe("Ranking class", () => {
     maxPlayers: 40,
     disabledUnits: [],
     randomSpawn: false,
+    freeNukes: false,
+    permanentAllies: false,
   };
 
   const gameTickDuration = 1000;

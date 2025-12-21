@@ -90,6 +90,8 @@ export interface Config {
   donateTroops(): boolean;
   instantBuild(): boolean;
   isRandomSpawn(): boolean;
+  freeNukes(): boolean;
+  permanentAllies(): boolean;
   numSpawnPhaseTurns(): number;
   userSettings(): UserSettings;
   playerTeams(): TeamCountConfig;

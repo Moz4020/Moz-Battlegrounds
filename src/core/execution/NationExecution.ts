@@ -938,11 +938,10 @@ export class NationExecution implements Execution {
     if (this.player === null) return;
 
     const { difficulty } = this.mg.config().gameConfig();
-    // In Easy never retaliate. In Medium retaliate with 15% chance. Hard with 50%, Impossible with 80%.
+    // In Easy never retaliate. In Medium retaliate with 15% chance. Hard with 50%.
     if (
       (difficulty === Difficulty.Medium && this.random.nextInt(0, 100) < 15) ||
-      (difficulty === Difficulty.Hard && this.random.nextInt(0, 100) < 50) ||
-      (difficulty === Difficulty.Impossible && this.random.nextInt(0, 100) < 80)
+      (difficulty === Difficulty.Hard && this.random.nextInt(0, 100) < 50)
     ) {
       const canBuild = this.player.canBuild(UnitType.Warship, tile);
       if (canBuild === false) {

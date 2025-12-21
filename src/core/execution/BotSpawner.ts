@@ -4,15 +4,12 @@ import { PseudoRandom } from "../PseudoRandom";
 import { GameID } from "../Schemas";
 import { simpleHash } from "../Util";
 import { SpawnExecution } from "./SpawnExecution";
-import {
-  COMMUNITY_BOT_NAMES,
-  COMMUNITY_PREFIXES,
-  SPECIAL_BOT_NAMES,
-} from "./utils/BotNames";
+import { BOT_NAMES, SPECIAL_BOT_NAMES } from "./utils/BotNames";
 
 export class BotSpawner {
   private random: PseudoRandom;
   private bots: SpawnExecution[] = [];
+  private shuffledNames: string[];
   private nameIndex = 0;
 
   constructor(
@@ -20,6 +17,8 @@ export class BotSpawner {
     gameID: GameID,
   ) {
     this.random = new PseudoRandom(simpleHash(gameID));
+    // Shuffle the bot names array for this game
+    this.shuffledNames = this.random.shuffleArray([...BOT_NAMES]);
   }
 
   spawnBots(numBots: number): SpawnExecution[] {
@@ -32,7 +31,8 @@ export class BotSpawner {
       const candidate = this.nextCandidateName();
       const spawn = this.spawnBot(candidate.name);
       if (spawn !== null) {
-        // Only use candidate name once bot successfully spawned
+        // Only advance the name index after successful spawn
+        // and only if we used a regular name (not special)
         if (candidate.source === "list") {
           this.nameIndex++;
         }
@@ -60,42 +60,16 @@ export class BotSpawner {
     );
   }
 
-  private nextCandidateName(): {
-    name: string;
-    source: "list" | "random";
-  } {
-    if (this.bots.length < 20) {
-      //first few usually overwritten by Nation spawn
-      return { name: this.getRandomBot(), source: "random" };
+  private nextCandidateName(): { name: string; source: "list" | "special" } {
+    // ~3% chance for a special name
+    if (this.random.next() < 0.03) {
+      const specialIndex = this.random.nextInt(0, SPECIAL_BOT_NAMES.length);
+      return { name: SPECIAL_BOT_NAMES[specialIndex], source: "special" };
     }
 
-    if (this.nameIndex < COMMUNITY_BOT_NAMES.length) {
-      return {
-        name: COMMUNITY_BOT_NAMES[this.nameIndex],
-        source: "list",
-      };
-    }
-    const specialOffset = COMMUNITY_BOT_NAMES.length;
-    if (this.nameIndex < specialOffset + SPECIAL_BOT_NAMES.length) {
-      return {
-        name: SPECIAL_BOT_NAMES[this.nameIndex - specialOffset],
-        source: "list",
-      };
-    }
-    const prefixOffset = specialOffset + SPECIAL_BOT_NAMES.length;
-    if (this.nameIndex < prefixOffset + COMMUNITY_PREFIXES.length) {
-      return {
-        name: `${COMMUNITY_PREFIXES[this.nameIndex - prefixOffset]}`,
-        source: "list",
-      };
-    }
-
-    return { name: this.getRandomBot(), source: "random" };
-  }
-
-  private getRandomBot(): string {
-    const suffixNumber = this.random.nextInt(1, 10001);
-    return `Bot ${suffixNumber}`;
+    // Get next name from shuffled list (don't increment here - do it after successful spawn)
+    const name = this.shuffledNames[this.nameIndex % this.shuffledNames.length];
+    return { name, source: "list" };
   }
 
   private randTile(): TileRef {

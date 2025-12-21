@@ -78,12 +78,6 @@ export class DonateTroopsExecution implements Execution {
           recipientMaxTroops / 9,
           recipientMaxTroops / 7,
         );
-      // ~14.3k - ~20k troops (for 100k troops)
-      case Difficulty.Impossible:
-        return this.random.nextInt(
-          recipientMaxTroops / 7,
-          recipientMaxTroops / 5,
-        );
       default:
         assertNever(difficulty);
     }

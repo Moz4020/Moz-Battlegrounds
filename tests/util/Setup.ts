@@ -69,6 +69,8 @@ export async function setup(
     infiniteTroops: false,
     instantBuild: false,
     randomSpawn: false,
+    freeNukes: false,
+    permanentAllies: false,
     ..._gameConfig,
   };
   const config = new ConfigClass(

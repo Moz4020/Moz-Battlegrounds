@@ -51,6 +51,8 @@ export class HostLobbyModal extends LitElement {
   @state() private maxTimerValue: number | undefined = undefined;
   @state() private instantBuild: boolean = false;
   @state() private randomSpawn: boolean = false;
+  @state() private freeNukes: boolean = false;
+  @state() private permanentAllies: boolean = false;
   @state() private compactMap: boolean = false;
   @state() private lobbyId = "";
   @state() private copySuccess = false;
@@ -291,6 +293,8 @@ export class HostLobbyModal extends LitElement {
               ${this.renderToggle("donate-troops", this.donateTroops, translateText("host_modal.donate_troops"), this.handleDonateTroopsChange)}
               ${this.renderToggle("infinite-gold", this.infiniteGold, translateText("host_modal.infinite_gold"), this.handleInfiniteGoldChange)}
               ${this.renderToggle("infinite-troops", this.infiniteTroops, translateText("host_modal.infinite_troops"), this.handleInfiniteTroopsChange)}
+              ${this.renderToggle("free-nukes", this.freeNukes, translateText("host_modal.free_nukes"), this.handleFreeNukesChange)}
+              ${this.renderToggle("permanent-allies", this.permanentAllies, translateText("host_modal.permanent_allies"), this.handlePermanentAlliesChange)}
               ${this.renderToggle("host-modal-compact-map", this.compactMap, translateText("host_modal.compact_map"), this.handleCompactMapChange)}
               
               <label class="option-toggle ${this.maxTimer ? "selected" : ""}" for="host-max-timer">
@@ -469,6 +473,16 @@ export class HostLobbyModal extends LitElement {
     this.putGameConfig();
   }
 
+  private handleFreeNukesChange(e: Event) {
+    this.freeNukes = Boolean((e.target as HTMLInputElement).checked);
+    this.putGameConfig();
+  }
+
+  private handlePermanentAlliesChange(e: Event) {
+    this.permanentAllies = Boolean((e.target as HTMLInputElement).checked);
+    this.putGameConfig();
+  }
+
   private handleCompactMapChange(e: Event) {
     this.compactMap = Boolean((e.target as HTMLInputElement).checked);
     this.putGameConfig();
@@ -536,6 +550,8 @@ export class HostLobbyModal extends LitElement {
           donateTroops: this.donateTroops,
           instantBuild: this.instantBuild,
           randomSpawn: this.randomSpawn,
+          freeNukes: this.freeNukes,
+          permanentAllies: this.permanentAllies,
           gameMode: this.gameMode,
           disabledUnits: this.disabledUnits,
           playerTeams: this.teamCount,

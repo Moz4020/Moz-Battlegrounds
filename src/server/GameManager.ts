@@ -71,6 +71,8 @@ export class GameManager {
         maxTimerValue: undefined,
         instantBuild: false,
         randomSpawn: false,
+        freeNukes: false,
+        permanentAllies: false,
         gameMode: GameMode.FFA,
         bots: 400,
         disabledUnits: [],

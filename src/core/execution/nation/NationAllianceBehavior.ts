@@ -53,8 +53,6 @@ export class NationAllianceBehavior {
           return this.random.chance(30);
         case Difficulty.Hard:
           return this.random.chance(25);
-        case Difficulty.Impossible:
-          return this.random.chance(20);
         default:
           assertNever(difficulty);
       }
@@ -119,8 +117,6 @@ export class NationAllianceBehavior {
         return this.random.chance(20); // 5% chance to be confused on medium
       case Difficulty.Hard:
         return this.random.chance(40); // 2.5% chance to be confused on hard
-      case Difficulty.Impossible:
-        return false; // No confusion on impossible
       default:
         assertNever(difficulty);
     }
@@ -142,19 +138,6 @@ export class NationAllianceBehavior {
           this.game.config().maxTroops(otherPlayer) >
             this.game.config().maxTroops(this.player) * 2
         );
-      case Difficulty.Impossible: {
-        // On impossible we check for multiple factors and try to not mess with stronger players (we want to steamroll over weaklings)
-        const otherHasMoreTroops =
-          otherPlayer.troops() > this.player.troops() * 1.5;
-        const otherHasMoreMaxTroops =
-          otherPlayer.troops() > this.player.troops() &&
-          this.game.config().maxTroops(otherPlayer) >
-            this.game.config().maxTroops(this.player) * 1.5;
-        const otherHasMoreTiles =
-          otherPlayer.troops() > this.player.troops() &&
-          otherPlayer.numTilesOwned() > this.player.numTilesOwned() * 1.5;
-        return otherHasMoreTroops || otherHasMoreMaxTroops || otherHasMoreTiles;
-      }
       default:
         assertNever(difficulty);
     }
@@ -167,9 +150,8 @@ export class NationAllianceBehavior {
         return false; // On easy we never think we have enough alliances
       case Difficulty.Medium:
         return this.player.alliances().length >= this.random.nextInt(5, 8);
-      case Difficulty.Hard:
-      case Difficulty.Impossible: {
-        // On hard and impossible we try to not ally with all our neighbors (If we have 3+ neighbors)
+      case Difficulty.Hard: {
+        // On hard we try to not ally with all our neighbors (If we have 3+ neighbors)
         const borderingPlayers = this.player
           .neighbors()
           .filter(
@@ -184,10 +166,7 @@ export class NationAllianceBehavior {
         ) {
           return borderingPlayers.length <= borderingFriends.length + 1;
         }
-        if (difficulty === Difficulty.Hard) {
-          return this.player.alliances().length >= this.random.nextInt(3, 6);
-        }
-        return this.player.alliances().length >= this.random.nextInt(2, 5);
+        return this.player.alliances().length >= this.random.nextInt(3, 6);
       }
       default:
         assertNever(difficulty);
@@ -204,11 +183,6 @@ export class NationAllianceBehavior {
         return (
           this.player.relation(otherPlayer) === Relation.Friendly &&
           this.random.nextInt(0, 100) >= 17
-        );
-      case Difficulty.Impossible:
-        return (
-          this.player.relation(otherPlayer) === Relation.Friendly &&
-          this.random.nextInt(0, 100) >= 33
         );
       default:
         assertNever(difficulty);
@@ -233,11 +207,6 @@ export class NationAllianceBehavior {
         return (
           otherPlayer.troops() >
           this.player.troops() * (this.random.nextInt(75, 85) / 100)
-        );
-      case Difficulty.Impossible:
-        return (
-          otherPlayer.troops() >
-          this.player.troops() * (this.random.nextInt(80, 90) / 100)
         );
       default:
         assertNever(difficulty);
