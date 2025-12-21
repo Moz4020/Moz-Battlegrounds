@@ -2,6 +2,7 @@ import cluster from "cluster";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import http from "http";
+import net from "net";
 import path from "path";
 import { fileURLToPath } from "url";
 import { getServerConfigFromServer } from "../core/configuration/ConfigLoader";
@@ -115,6 +116,60 @@ export async function startMaster() {
   server.listen(PORT, () => {
     log.info(`Master HTTP server listening on port ${PORT}`);
   });
+
+  // Handle WebSocket upgrade requests and proxy to the correct worker
+  server.on("upgrade", (req, socket, head) => {
+    const url = req.url || "";
+    const match = url.match(/^\/w(\d+)/);
+    
+    if (match) {
+      const workerIndex = parseInt(match[1]);
+      const workerPort = config.workerPortByIndex(workerIndex);
+      
+      log.info(`Proxying WebSocket upgrade to worker ${workerIndex} on port ${workerPort}`);
+      
+      // Create a TCP connection to the worker
+      const workerSocket = net.connect(workerPort, "localhost", () => {
+        // Forward the original HTTP upgrade request to the worker
+        const requestLine = `${req.method} ${url} HTTP/${req.httpVersion}\r\n`;
+        const headers = Object.entries(req.headers)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join("\r\n");
+        
+        workerSocket.write(requestLine + headers + "\r\n\r\n");
+        
+        // Send any buffered data (the head)
+        if (head.length > 0) {
+          workerSocket.write(head);
+        }
+        
+        // Pipe data between client and worker
+        socket.pipe(workerSocket);
+        workerSocket.pipe(socket);
+      });
+      
+      workerSocket.on("error", (err) => {
+        log.error(`Failed to connect to worker ${workerIndex}:`, err);
+        socket.destroy();
+      });
+      
+      socket.on("error", (err) => {
+        log.error("Client socket error:", err);
+        workerSocket.destroy();
+      });
+      
+      socket.on("close", () => {
+        workerSocket.destroy();
+      });
+      
+      workerSocket.on("close", () => {
+        socket.destroy();
+      });
+    } else {
+      // No worker path, destroy the connection
+      socket.destroy();
+    }
+  });
 }
 
 app.get("/api/env", async (req, res) => {
@@ -128,6 +183,61 @@ app.get("/api/env", async (req, res) => {
 // Public lobbies endpoint - returns empty since we don't have public games
 app.get("/api/public_lobbies", async (req, res) => {
   res.json({ lobbies: [] });
+});
+
+// Proxy /wX/... requests to the appropriate worker
+// This is needed for Render deployment where nginx is not available
+app.all(/^\/w(\d+)(\/.*)$/, async (req, res) => {
+  const match = req.path.match(/^\/w(\d+)(\/.*)$/);
+  if (!match) {
+    res.status(400).json({ error: "Invalid worker path" });
+    return;
+  }
+
+  const workerIndex = parseInt(match[1]);
+  const pathWithoutPrefix = match[2];
+  const workerPort = config.workerPortByIndex(workerIndex);
+
+  // Build the target URL
+  const queryString = Object.keys(req.query).length > 0 
+    ? `?${new URLSearchParams(req.query as Record<string, string>).toString()}`
+    : "";
+  const targetUrl = `http://localhost:${workerPort}${pathWithoutPrefix}${queryString}`;
+
+  try {
+    const fetchOptions: RequestInit = {
+      method: req.method,
+      headers: {
+        "Content-Type": req.headers["content-type"] || "application/json",
+        ...(req.headers[config.adminHeader()] 
+          ? { [config.adminHeader()]: req.headers[config.adminHeader()] as string } 
+          : {}),
+      },
+    };
+
+    // Add body for non-GET requests
+    if (req.method !== "GET" && req.method !== "HEAD" && req.body) {
+      fetchOptions.body = JSON.stringify(req.body);
+    }
+
+    const response = await fetch(targetUrl, fetchOptions);
+    
+    // Forward response status and headers
+    res.status(response.status);
+    
+    // Handle JSON responses
+    const contentType = response.headers.get("content-type");
+    if (contentType?.includes("application/json")) {
+      const data = await response.json();
+      res.json(data);
+    } else {
+      const text = await response.text();
+      res.send(text);
+    }
+  } catch (error) {
+    log.error(`Error proxying to worker ${workerIndex}:`, error);
+    res.status(502).json({ error: "Failed to proxy request to worker" });
+  }
 });
 
 app.post("/api/kick_player/:gameID/:clientID", async (req, res) => {
