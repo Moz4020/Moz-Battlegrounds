@@ -87,10 +87,11 @@ export class HostLobbyModal extends LitElement {
     }
   };
 
-  private renderToggle(id: string, checked: boolean, label: string, onChange: (e: Event) => void) {
+  private renderToggle(id: string, checked: boolean, label: string, onChange: (e: Event) => void, tooltip?: string) {
     return html`
       <label class="option-toggle ${checked ? "selected" : ""}" for="${id}">
         <span class="option-toggle__label">${label}</span>
+        ${tooltip ? html`<span class="option-toggle__tooltip">${tooltip}</span>` : ""}
         <input type="checkbox" id="${id}" @change=${onChange} .checked=${checked} style="display:none" />
         <div class="option-toggle__switch"></div>
       </label>
@@ -285,17 +286,17 @@ export class HostLobbyModal extends LitElement {
 
             <div class="options-toggle-grid">
               ${!(this.gameMode === GameMode.Team && this.teamCount === HumansVsNations)
-        ? this.renderToggle("disable-nations", this.disableNations, translateText("host_modal.disable_nations"), this.handleDisableNationsChange)
+        ? this.renderToggle("disable-nations", this.disableNations, translateText("host_modal.disable_nations"), this.handleDisableNationsChange, translateText("host_modal.tooltip_disable_nations"))
         : ""}
-              ${this.renderToggle("instant-build", this.instantBuild, translateText("host_modal.instant_build"), this.handleInstantBuildChange)}
-              ${this.renderToggle("random-spawn", this.randomSpawn, translateText("host_modal.random_spawn"), this.handleRandomSpawnChange)}
-              ${this.renderToggle("donate-gold", this.donateGold, translateText("host_modal.donate_gold"), this.handleDonateGoldChange)}
-              ${this.renderToggle("donate-troops", this.donateTroops, translateText("host_modal.donate_troops"), this.handleDonateTroopsChange)}
-              ${this.renderToggle("infinite-gold", this.infiniteGold, translateText("host_modal.infinite_gold"), this.handleInfiniteGoldChange)}
-              ${this.renderToggle("infinite-troops", this.infiniteTroops, translateText("host_modal.infinite_troops"), this.handleInfiniteTroopsChange)}
-              ${this.renderToggle("free-nukes", this.freeNukes, translateText("host_modal.free_nukes"), this.handleFreeNukesChange)}
-              ${this.renderToggle("permanent-allies", this.permanentAllies, translateText("host_modal.permanent_allies"), this.handlePermanentAlliesChange)}
-              ${this.renderToggle("host-modal-compact-map", this.compactMap, translateText("host_modal.compact_map"), this.handleCompactMapChange)}
+              ${this.renderToggle("instant-build", this.instantBuild, translateText("host_modal.instant_build"), this.handleInstantBuildChange, translateText("host_modal.tooltip_instant_build"))}
+              ${this.renderToggle("random-spawn", this.randomSpawn, translateText("host_modal.random_spawn"), this.handleRandomSpawnChange, translateText("host_modal.tooltip_random_spawn"))}
+              ${this.renderToggle("donate-gold", this.donateGold, translateText("host_modal.donate_gold"), this.handleDonateGoldChange, translateText("host_modal.tooltip_donate_gold"))}
+              ${this.renderToggle("donate-troops", this.donateTroops, translateText("host_modal.donate_troops"), this.handleDonateTroopsChange, translateText("host_modal.tooltip_donate_troops"))}
+              ${this.renderToggle("infinite-gold", this.infiniteGold, translateText("host_modal.infinite_gold"), this.handleInfiniteGoldChange, translateText("host_modal.tooltip_infinite_gold"))}
+              ${this.renderToggle("infinite-troops", this.infiniteTroops, translateText("host_modal.infinite_troops"), this.handleInfiniteTroopsChange, translateText("host_modal.tooltip_infinite_troops"))}
+              ${this.renderToggle("free-nukes", this.freeNukes, translateText("host_modal.free_nukes"), this.handleFreeNukesChange, translateText("host_modal.tooltip_free_nukes"))}
+              ${this.renderToggle("permanent-allies", this.permanentAllies, translateText("host_modal.permanent_allies"), this.handlePermanentAlliesChange, translateText("host_modal.tooltip_permanent_allies"))}
+              ${this.renderToggle("host-modal-compact-map", this.compactMap, translateText("host_modal.compact_map"), this.handleCompactMapChange, translateText("host_modal.tooltip_compact_map"))}
               
               <label class="option-toggle ${this.maxTimer ? "selected" : ""}" for="host-max-timer">
                 <span class="option-toggle__label">${translateText("host_modal.max_timer")}</span>

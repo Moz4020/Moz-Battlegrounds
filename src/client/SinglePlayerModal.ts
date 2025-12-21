@@ -72,10 +72,11 @@ export class SinglePlayerModal extends LitElement {
     }
   };
 
-  private renderToggle(id: string, checked: boolean, label: string, onChange: (e: Event) => void) {
+  private renderToggle(id: string, checked: boolean, label: string, onChange: (e: Event) => void, tooltip?: string) {
     return html`
       <label class="option-toggle ${checked ? "selected" : ""}" for="${id}">
         <span class="option-toggle__label">${label}</span>
+        ${tooltip ? html`<span class="option-toggle__tooltip">${tooltip}</span>` : ""}
         <input type="checkbox" id="${id}" @change=${onChange} .checked=${checked} style="display:none" />
         <div class="option-toggle__switch"></div>
       </label>
@@ -250,15 +251,15 @@ export class SinglePlayerModal extends LitElement {
 
             <div class="options-toggle-grid">
               ${!(this.gameMode === GameMode.Team && this.teamCount === HumansVsNations)
-        ? this.renderToggle("singleplayer-modal-disable-nations", this.disableNations, translateText("single_modal.disable_nations"), this.handleDisableNationsChange)
+        ? this.renderToggle("singleplayer-modal-disable-nations", this.disableNations, translateText("single_modal.disable_nations"), this.handleDisableNationsChange, translateText("single_modal.tooltip_disable_nations"))
         : ""}
-              ${this.renderToggle("singleplayer-modal-instant-build", this.instantBuild, translateText("single_modal.instant_build"), this.handleInstantBuildChange)}
-              ${this.renderToggle("singleplayer-modal-random-spawn", this.randomSpawn, translateText("single_modal.random_spawn"), this.handleRandomSpawnChange)}
-              ${this.renderToggle("singleplayer-modal-infinite-gold", this.infiniteGold, translateText("single_modal.infinite_gold"), this.handleInfiniteGoldChange)}
-              ${this.renderToggle("singleplayer-modal-infinite-troops", this.infiniteTroops, translateText("single_modal.infinite_troops"), this.handleInfiniteTroopsChange)}
-              ${this.renderToggle("singleplayer-modal-free-nukes", this.freeNukes, translateText("single_modal.free_nukes"), this.handleFreeNukesChange)}
-              ${this.renderToggle("singleplayer-modal-permanent-allies", this.permanentAllies, translateText("single_modal.permanent_allies"), this.handlePermanentAlliesChange)}
-              ${this.renderToggle("singleplayer-modal-compact-map", this.compactMap, translateText("single_modal.compact_map"), this.handleCompactMapChange)}
+              ${this.renderToggle("singleplayer-modal-instant-build", this.instantBuild, translateText("single_modal.instant_build"), this.handleInstantBuildChange, translateText("single_modal.tooltip_instant_build"))}
+              ${this.renderToggle("singleplayer-modal-random-spawn", this.randomSpawn, translateText("single_modal.random_spawn"), this.handleRandomSpawnChange, translateText("single_modal.tooltip_random_spawn"))}
+              ${this.renderToggle("singleplayer-modal-infinite-gold", this.infiniteGold, translateText("single_modal.infinite_gold"), this.handleInfiniteGoldChange, translateText("single_modal.tooltip_infinite_gold"))}
+              ${this.renderToggle("singleplayer-modal-infinite-troops", this.infiniteTroops, translateText("single_modal.infinite_troops"), this.handleInfiniteTroopsChange, translateText("single_modal.tooltip_infinite_troops"))}
+              ${this.renderToggle("singleplayer-modal-free-nukes", this.freeNukes, translateText("single_modal.free_nukes"), this.handleFreeNukesChange, translateText("single_modal.tooltip_free_nukes"))}
+              ${this.renderToggle("singleplayer-modal-permanent-allies", this.permanentAllies, translateText("single_modal.permanent_allies"), this.handlePermanentAlliesChange, translateText("single_modal.tooltip_permanent_allies"))}
+              ${this.renderToggle("singleplayer-modal-compact-map", this.compactMap, translateText("single_modal.compact_map"), this.handleCompactMapChange, translateText("single_modal.tooltip_compact_map"))}
               
               <label class="option-toggle ${this.maxTimer ? "selected" : ""}" for="max-timer">
                 <span class="option-toggle__label">${translateText("single_modal.max_timer")}</span>

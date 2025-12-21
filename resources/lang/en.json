@@ -150,7 +150,16 @@
     "free_nukes": "Free Nukes",
     "permanent_allies": "Permanent Allies",
     "enables_title": "Enable Settings",
-    "start": "Start Game"
+    "start": "Start Game",
+    "tooltip_disable_nations": "Removes AI nation spawns from the game",
+    "tooltip_instant_build": "Buildings complete immediately",
+    "tooltip_random_spawn": "Spawn at random locations",
+    "tooltip_infinite_gold": "Players have unlimited gold",
+    "tooltip_infinite_troops": "Players have unlimited troops",
+    "tooltip_free_nukes": "Atom bombs cost zero gold",
+    "tooltip_permanent_allies": "Alliances never expire",
+    "tooltip_compact_map": "Smaller map for faster games",
+    "tooltip_max_timer": "Set maximum game duration"
   },
   "token_login_modal": {
     "title": "Logging in...",
@@ -326,7 +335,18 @@
     "teams_Quads": "Quads (teams of 4)",
     "drag_hint": "Drag players between teams to reassign them",
     "reset_teams": "Reset to Auto",
-    "manually_assigned": "Manually assigned"
+    "manually_assigned": "Manually assigned",
+    "tooltip_disable_nations": "Removes AI nation spawns from the game",
+    "tooltip_instant_build": "Buildings complete immediately",
+    "tooltip_random_spawn": "Spawn at random locations",
+    "tooltip_donate_gold": "Allow donating gold to allies",
+    "tooltip_donate_troops": "Allow donating troops to allies",
+    "tooltip_infinite_gold": "Players have unlimited gold",
+    "tooltip_infinite_troops": "Players have unlimited troops",
+    "tooltip_free_nukes": "Atom bombs cost zero gold",
+    "tooltip_permanent_allies": "Alliances never expire",
+    "tooltip_compact_map": "Smaller map for faster games",
+    "tooltip_max_timer": "Set maximum game duration"
   },
   "team_colors": {
     "red": "Red",
