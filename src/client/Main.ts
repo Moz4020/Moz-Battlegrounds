@@ -6,8 +6,7 @@ import { getServerConfigFromClient } from "../core/configuration/ConfigLoader";
 import { GameType } from "../core/game/Game";
 import { UserSettings } from "../core/game/UserSettings";
 import { joinLobby } from "./ClientGameRunner";
-import "./DarkModeButton";
-import { DarkModeButton } from "./DarkModeButton";
+
 import "./FlagInput";
 import { FlagInput } from "./FlagInput";
 import { FlagInputModal } from "./FlagInputModal";
@@ -89,7 +88,6 @@ class Client {
 
   private usernameInput: UsernameInput | null = null;
   private flagInput: FlagInput | null = null;
-  private darkModeButton: DarkModeButton | null = null;
 
   private joinModal: JoinPrivateLobbyModal;
   private userSettings: UserSettings = new UserSettings();
@@ -132,13 +130,6 @@ class Client {
     this.flagInput = document.querySelector("flag-input") as FlagInput;
     if (!this.flagInput) {
       console.warn("Flag input element not found");
-    }
-
-    this.darkModeButton = document.querySelector(
-      "dark-mode-button",
-    ) as DarkModeButton;
-    if (!this.darkModeButton) {
-      console.warn("Dark mode button element not found");
     }
 
     this.usernameInput = document.querySelector(

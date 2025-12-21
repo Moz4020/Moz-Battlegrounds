@@ -157,49 +157,68 @@ export class SinglePlayerModal extends LitElement {
         : html`
                 <div class="options-section">
                   <div class="option-title">${translateText("host_modal.team_count")}</div>
-                  <div class="team-mode-selector">
-                    ${[2, 3, 4, 5, 6, 7].map(
+                  
+                <div class="team-selector">
+                    <!-- Fixed Team Count -->
+                    <div class="team-selector__group">
+                      <div class="team-selector__group-label">Fixed Teams</div>
+                      <div class="team-selector__row">
+                        ${[2, 3, 4, 5, 6, 7].map(
           (num) => html`
-                        <div 
-                          class="team-mode-card ${this.teamCount === num ? "selected" : ""}" 
-                          @click=${() => this.handleTeamCountSelection(num)}
-                        >
-                          <div class="team-mode-card__value">${num}</div>
-                          <div class="team-mode-card__label">TEAMS</div>
-                        </div>
-                      `,
+                            <button 
+                              class="team-chip ${this.teamCount === num ? "selected" : ""}" 
+                              @click=${() => this.handleTeamCountSelection(num)}
+                            >
+                              ${num}
+                            </button>
+                          `,
         )}
-                    <div 
-                      class="team-mode-card ${this.teamCount === Duos ? "selected" : ""}" 
-                      @click=${() => this.handleTeamCountSelection(Duos)}
-                    >
-                      <div class="team-mode-card__value">2s</div>
-                      <div class="team-mode-card__label">DUOS</div>
-                    </div>
-                    <div 
-                      class="team-mode-card ${this.teamCount === Trios ? "selected" : ""}" 
-                      @click=${() => this.handleTeamCountSelection(Trios)}
-                    >
-                      <div class="team-mode-card__value">3s</div>
-                      <div class="team-mode-card__label">TRIOS</div>
-                    </div>
-                    <div 
-                      class="team-mode-card ${this.teamCount === Quads ? "selected" : ""}" 
-                      @click=${() => this.handleTeamCountSelection(Quads)}
-                    >
-                      <div class="team-mode-card__value">4s</div>
-                      <div class="team-mode-card__label">QUADS</div>
-                    </div>
-                    <div 
-                      class="team-mode-card team-mode-card--special ${this.teamCount === HumansVsNations ? "selected" : ""}" 
-                      @click=${() => this.handleTeamCountSelection(HumansVsNations)}
-                    >
-                      <span>🛡️</span>
-                      <div class="flex flex-col items-start">
-                        <div class="team-mode-card__value">Humans vs AI</div>
-                        <div class="team-mode-card__label">SPECIAL MODE</div>
                       </div>
                     </div>
+
+                    <div class="team-selector__divider"></div>
+
+                    <!-- Per-Player Modes -->
+                    <div class="team-selector__group">
+                      <div class="team-selector__group-label">Per Player</div>
+                      <div class="team-selector__row">
+                        <button 
+                          class="team-chip team-chip--mode ${this.teamCount === Duos ? "selected" : ""}" 
+                          @click=${() => this.handleTeamCountSelection(Duos)}
+                        >
+                          <span class="team-chip__num">2s</span>
+                          <span class="team-chip__label">Duos</span>
+                        </button>
+                        <button 
+                          class="team-chip team-chip--mode ${this.teamCount === Trios ? "selected" : ""}" 
+                          @click=${() => this.handleTeamCountSelection(Trios)}
+                        >
+                          <span class="team-chip__num">3s</span>
+                          <span class="team-chip__label">Trios</span>
+                        </button>
+                        <button 
+                          class="team-chip team-chip--mode ${this.teamCount === Quads ? "selected" : ""}" 
+                          @click=${() => this.handleTeamCountSelection(Quads)}
+                        >
+                          <span class="team-chip__num">4s</span>
+                          <span class="team-chip__label">Quads</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="team-selector__divider"></div>
+
+                    <!-- Special Mode -->
+                    <button 
+                      class="team-special ${this.teamCount === HumansVsNations ? "selected" : ""}" 
+                      @click=${() => this.handleTeamCountSelection(HumansVsNations)}
+                    >
+                      <span class="team-special__icon">🛡️</span>
+                      <div class="team-special__text">
+                        <span class="team-special__title">Humans vs AI</span>
+                        <span class="team-special__subtitle">All players team up</span>
+                      </div>
+                    </button>
                   </div>
                 </div>
               `}
