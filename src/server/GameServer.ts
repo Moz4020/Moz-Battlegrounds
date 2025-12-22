@@ -35,6 +35,13 @@ export class GameServer {
 
   private disconnectedTimeout = 1 * 30 * 1000; // 30 seconds
 
+  // Maximum number of turns to retain in memory for client rejoin support.
+  // At ~20 turns/sec, 1000 turns = ~50 seconds of gameplay history.
+  private readonly maxTurnRetention = 1000;
+
+  // Tracks the first turn number still in the turns array (for calculating offsets)
+  private turnOffset = 0;
+
   private turns: Turn[] = [];
   private intents: Intent[] = [];
   public activeClients: Client[] = [];
@@ -452,6 +459,21 @@ export class GameServer {
           }
           case "hash": {
             client.hashes.set(clientMsg.turnNumber, clientMsg.hash);
+            // Prune old hashes to prevent unbounded memory growth
+            // Keep only the last 20 hash checkpoints (hashes are sent every 10 turns)
+            const maxHashesToKeep = 20;
+            if (client.hashes.size > maxHashesToKeep) {
+              const sortedKeys = Array.from(client.hashes.keys()).sort(
+                (a, b) => a - b,
+              );
+              const keysToDelete = sortedKeys.slice(
+                0,
+                sortedKeys.length - maxHashesToKeep,
+              );
+              for (const key of keysToDelete) {
+                client.hashes.delete(key);
+              }
+            }
             break;
           }
           case "winner": {
@@ -581,10 +603,14 @@ export class GameServer {
 
   private sendStartGameMsg(ws: WebSocket, lastTurn: number) {
     try {
+      // Calculate the index in the turns array, accounting for pruned turns
+      // lastTurn is the client's last known turn number
+      // turnOffset is the first turn number still in our array
+      const startIndex = Math.max(0, lastTurn - this.turnOffset);
       ws.send(
         JSON.stringify({
           type: "start",
-          turns: this.turns.slice(lastTurn),
+          turns: this.turns.slice(startIndex),
           gameStartInfo: this.gameStartInfo,
           lobbyCreatedAt: this.createdAt,
         } satisfies ServerStartGameMessage),
@@ -601,11 +627,18 @@ export class GameServer {
 
   private endTurn() {
     const pastTurn: Turn = {
-      turnNumber: this.turns.length,
+      turnNumber: this.turnOffset + this.turns.length,
       intents: this.intents,
     };
     this.turns.push(pastTurn);
     this.intents = [];
+
+    // Prune old turns to prevent unbounded memory growth
+    if (this.turns.length > this.maxTurnRetention) {
+      const pruneCount = this.turns.length - this.maxTurnRetention;
+      this.turns.splice(0, pruneCount);
+      this.turnOffset += pruneCount;
+    }
 
     this.handleSynchronization();
     this.checkDisconnectedStatus();
@@ -633,7 +666,7 @@ export class GameServer {
       this.log.info(`game not started, not archiving game`);
       return;
     }
-    this.log.info(`ending game with ${this.turns.length} turns`);
+    this.log.info(`ending game with ${this.turnOffset + this.turns.length} turns`);
     try {
       if (this.allClients.size === 0) {
         this.log.info("no clients joined, not archiving game", {
@@ -829,18 +862,28 @@ export class GameServer {
     if (this.activeClients.length <= 1) {
       return;
     }
-    if (this.turns.length % 10 !== 0 || this.turns.length < 10) {
+    // Calculate the current total turn count (including pruned turns)
+    const totalTurns = this.turnOffset + this.turns.length;
+    if (totalTurns % 10 !== 0 || totalTurns < 10) {
       // Check hashes every 10 turns
       return;
     }
 
-    const lastHashTurn = this.turns.length - 10;
+    // lastHashTurn is the actual turn number (for client hash lookup)
+    const lastHashTurn = totalTurns - 10;
+    // lastHashIndex is the index in our pruned turns array
+    const lastHashIndex = lastHashTurn - this.turnOffset;
+
+    // If the turn we need to check has been pruned, skip synchronization
+    if (lastHashIndex < 0 || lastHashIndex >= this.turns.length) {
+      return;
+    }
 
     const { mostCommonHash, outOfSyncClients } =
       this.findOutOfSyncClients(lastHashTurn);
 
     if (outOfSyncClients.length === 0) {
-      this.turns[lastHashTurn].hash = mostCommonHash;
+      this.turns[lastHashIndex].hash = mostCommonHash;
       return;
     }
 

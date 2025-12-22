@@ -1,4 +1,7 @@
-import * as d3 from "d3";
+import { color as d3color, rgb } from "d3-color";
+import { select, Selection } from "d3-selection";
+import { arc, pie, Arc, PieArcDatum } from "d3-shape";
+import "d3-transition"; // Required for .transition() to work on selections
 import backIcon from "../../../../resources/images/BackIconWhite.svg";
 import { EventBus, GameEvent } from "../../../core/EventBus";
 import { CloseViewEvent } from "../../InputHandler";
@@ -40,7 +43,7 @@ type CenterButtonState = "default" | "back";
 type RequiredRadialMenuConfig = Required<RadialMenuConfig>;
 
 export class RadialMenu implements Layer {
-  private menuElement: d3.Selection<HTMLDivElement, unknown, null, undefined>;
+  private menuElement: Selection<HTMLDivElement, unknown, null, undefined>;
   private tooltipElement: HTMLDivElement | null = null;
   private isVisible: boolean = false;
 
@@ -62,15 +65,15 @@ export class RadialMenu implements Layer {
 
   private menuGroups: Map<
     number,
-    d3.Selection<SVGGElement, unknown, null, undefined>
+    Selection<SVGGElement, unknown, null, undefined>
   > = new Map();
   private menuPaths: Map<
     string,
-    d3.Selection<SVGPathElement, unknown, null, undefined>
+    Selection<SVGPathElement, unknown, null, undefined>
   > = new Map();
   private menuIcons: Map<
     string,
-    d3.Selection<SVGImageElement, unknown, null, undefined>
+    Selection<SVGImageElement, unknown, null, undefined>
   > = new Map();
 
   private selectedItemId: string | null = null;
@@ -93,7 +96,7 @@ export class RadialMenu implements Layer {
       centerButtonSize: config.centerButtonSize ?? 30,
       iconSize: config.iconSize ?? 32,
       centerIconSize: config.centerIconSize ?? 48,
-      disabledColor: config.disabledColor ?? d3.rgb(128, 128, 128).toString(),
+      disabledColor: config.disabledColor ?? rgb(128, 128, 128).toString(),
       menuTransitionDuration: config.menuTransitionDuration ?? 300,
       mainMenuInnerRadius: config.mainMenuInnerRadius ?? 40,
       centerButtonIcon: config.centerButtonIcon ?? "",
@@ -115,8 +118,7 @@ export class RadialMenu implements Layer {
 
   private createMenuElement() {
     // Create an overlay to catch clicks outside the menu
-    this.menuElement = d3
-      .select(document.body)
+    this.menuElement = select(document.body)
       .append("div")
       .attr("class", "radial-menu-container")
       .style("position", "fixed")
@@ -269,8 +271,7 @@ export class RadialMenu implements Layer {
 
     const offset = -Math.PI / items.length;
 
-    const pie = d3
-      .pie<MenuElement>()
+    const pieLayout = pie<MenuElement>()
       .value(() => 1)
       .padAngle(0.03)
       .startAngle(offset)
@@ -279,52 +280,51 @@ export class RadialMenu implements Layer {
     const innerRadius = this.getInnerRadiusForLevel(level);
     const outerRadius = this.getOuterRadiusForLevel(level);
 
-    const arc = d3
-      .arc<d3.PieArcDatum<MenuElement>>()
+    const arcGenerator = arc<PieArcDatum<MenuElement>>()
       .innerRadius(innerRadius)
       .outerRadius(outerRadius);
 
     const arcs = menuGroup
       .selectAll(".menu-item")
-      .data(pie(items))
+      .data(pieLayout(items))
       .enter()
       .append("g")
       .attr("class", "menu-item-group");
 
-    this.renderPaths(arcs, arc, level);
+    this.renderPaths(arcs, arcGenerator, level);
     this.setupEventHandlers(arcs, level);
-    this.renderIconsAndText(arcs, arc);
+    this.renderIconsAndText(arcs, arcGenerator);
     this.setupAnimations(menuGroup);
 
     return menuGroup;
   }
 
   private renderPaths(
-    arcs: d3.Selection<
+    arcs: Selection<
       SVGGElement,
-      d3.PieArcDatum<MenuElement>,
+      PieArcDatum<MenuElement>,
       SVGGElement,
       unknown
     >,
-    arc: d3.Arc<any, d3.PieArcDatum<MenuElement>>,
+    arcGen: Arc<any, PieArcDatum<MenuElement>>,
     level: number,
   ) {
     arcs
       .append("path")
       .attr("class", "menu-item-path")
-      .attr("d", arc)
+      .attr("d", arcGen)
       .attr("fill", (d) => {
         const disabled = this.params === null || d.data.disabled(this.params);
-        const color = disabled
+        const itemColor = disabled
           ? this.config.disabledColor
           : (d.data.color ?? "#333333");
         const opacity = disabled ? 0.5 : 0.7;
 
         if (d.data.id === this.selectedItemId && this.currentLevel > level) {
-          return color;
+          return itemColor;
         }
 
-        return d3.color(color)?.copy({ opacity: opacity })?.toString() ?? color;
+        return d3color(itemColor)?.copy({ opacity: opacity })?.toString() ?? itemColor;
       })
       .attr("stroke", "#ffffff")
       .attr("stroke-width", "2")
@@ -346,7 +346,7 @@ export class RadialMenu implements Layer {
 
     arcs.each((d) => {
       const pathId = d.data.id;
-      const path = d3.select(`path[data-id="${pathId}"]`);
+      const path = select(`path[data-id="${pathId}"]`);
       this.menuPaths.set(pathId, path as any);
 
       if (
@@ -369,7 +369,7 @@ export class RadialMenu implements Layer {
     this.menuGroups.forEach((group, menuLevel) => {
       if (menuLevel < this.currentLevel) {
         group.selectAll("path").each(function () {
-          const pathElement = d3.select(this);
+          const pathElement = select(this);
           pathElement.style("pointer-events", "none");
         });
       } else if (menuLevel === this.currentLevel) {
@@ -379,15 +379,15 @@ export class RadialMenu implements Layer {
   }
 
   private setupEventHandlers(
-    arcs: d3.Selection<
+    arcs: Selection<
       SVGGElement,
-      d3.PieArcDatum<MenuElement>,
+      PieArcDatum<MenuElement>,
       SVGGElement,
       unknown
     >,
     level: number,
   ) {
-    const onHover = (d: d3.PieArcDatum<MenuElement>, path: any) => {
+    const onHover = (d: PieArcDatum<MenuElement>, path: any) => {
       const disabled = this.params === null || d.data.disabled(this.params);
       if (d.data.tooltipItems && d.data.tooltipItems.length > 0) {
         this.showTooltip(d.data.tooltipItems);
@@ -406,7 +406,7 @@ export class RadialMenu implements Layer {
       path.attr("stroke-width", "3");
     };
 
-    const onMouseOut = (d: d3.PieArcDatum<MenuElement>, path: any) => {
+    const onMouseOut = (d: PieArcDatum<MenuElement>, path: any) => {
       const disabled = this.params === null || d.data.disabled(this.params);
       if (this.submenuHoverTimeout !== null) {
         window.clearTimeout(this.submenuHoverTimeout);
@@ -424,17 +424,17 @@ export class RadialMenu implements Layer {
         return;
       path.attr("filter", null);
       path.attr("stroke-width", "2");
-      const color = disabled
+      const itemColor = disabled
         ? this.config.disabledColor
         : (d.data.color ?? "#333333");
       const opacity = disabled ? 0.5 : 0.7;
       path.attr(
         "fill",
-        d3.color(color)?.copy({ opacity: opacity })?.toString() ?? color,
+        d3color(itemColor)?.copy({ opacity: opacity })?.toString() ?? itemColor,
       );
     };
 
-    const onClick = (d: d3.PieArcDatum<MenuElement>, event: Event) => {
+    const onClick = (d: PieArcDatum<MenuElement>, event: Event) => {
       event.stopPropagation();
       if (
         this.params === null ||
@@ -476,7 +476,7 @@ export class RadialMenu implements Layer {
 
     arcs.each((d) => {
       const pathId = d.data.id;
-      const path = d3.select(`path[data-id="${pathId}"]`);
+      const path = select(`path[data-id="${pathId}"]`);
 
       path.on("mouseover", function () {
         onHover(d, path);
@@ -511,13 +511,13 @@ export class RadialMenu implements Layer {
   }
 
   private renderIconsAndText(
-    arcs: d3.Selection<
+    arcs: Selection<
       SVGGElement,
-      d3.PieArcDatum<MenuElement>,
+      PieArcDatum<MenuElement>,
       SVGGElement,
       unknown
     >,
-    arc: d3.Arc<any, d3.PieArcDatum<MenuElement>>,
+    arc: Arc<any, PieArcDatum<MenuElement>>,
   ) {
     arcs
       .append("g")
@@ -526,7 +526,7 @@ export class RadialMenu implements Layer {
       .attr("data-id", (d) => d.data.id)
       .each((d) => {
         const contentId = d.data.id;
-        const content = d3.select(`g[data-id="${contentId}"]`);
+        const content = select(`g[data-id="${contentId}"]`);
         const disabled = this.isItemDisabled(d.data);
 
         if (d.data.text) {
@@ -590,7 +590,7 @@ export class RadialMenu implements Layer {
   }
 
   private setupAnimations(
-    menuGroup: d3.Selection<SVGGElement, unknown, null, undefined>,
+    menuGroup: Selection<SVGGElement, unknown, null, undefined>,
   ) {
     menuGroup
       .transition()
@@ -650,7 +650,7 @@ export class RadialMenu implements Layer {
         // Disable pointer events for previous level when going forward
         if (direction === "forward") {
           menuGroup.selectAll("path").each(function () {
-            const pathElement = d3.select(this);
+            const pathElement = select(this);
             pathElement.style("pointer-events", "none");
           });
         }
@@ -662,7 +662,7 @@ export class RadialMenu implements Layer {
           .style("transform", "scale(0.5)")
           .style("opacity", 0)
           .on("end", function () {
-            d3.select(this).style("display", "none");
+            select(this).style("display", "none");
           });
       }
     });
@@ -741,7 +741,7 @@ export class RadialMenu implements Layer {
       .style("transform", "scale(0.5)")
       .style("opacity", 0)
       .on("end", function () {
-        d3.select(this).remove();
+        select(this).remove();
       });
 
     // Handle previous menu animation
@@ -768,7 +768,7 @@ export class RadialMenu implements Layer {
   }
 
   private animateExistingMenu(
-    previousMenu: d3.Selection<any, unknown, null, undefined>,
+    previousMenu: Selection<any, unknown, null, undefined>,
   ) {
     previousMenu
       .transition()
@@ -1000,7 +1000,7 @@ export class RadialMenu implements Layer {
       const item = this.findMenuItem(itemId);
       if (item) {
         const disabled = this.isItemDisabled(item);
-        const color = disabled
+        const itemColor = disabled
           ? this.config.disabledColor
           : (item.color ?? "#333333");
         const opacity = disabled ? 0.5 : 0.7;
@@ -1008,7 +1008,7 @@ export class RadialMenu implements Layer {
         // Update path appearance
         path.attr(
           "fill",
-          d3.color(color)?.copy({ opacity: opacity })?.toString() ?? color,
+          d3color(itemColor)?.copy({ opacity: opacity })?.toString() ?? itemColor,
         );
         path.style("opacity", disabled ? 0.5 : 1);
         path.style("cursor", disabled ? "not-allowed" : "pointer");

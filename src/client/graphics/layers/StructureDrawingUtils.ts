@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+import { BitmapText, Container, Graphics, Sprite, Texture } from "pixi.js";
 import { Theme } from "../../../core/configuration/Config";
 import { Cell, UnitType } from "../../../core/game/Game";
 import { GameView, PlayerView, UnitView } from "../../../core/game/GameView";
@@ -51,7 +51,7 @@ export class SpriteFactory {
   private game: GameView;
   private transformHandler: TransformHandler;
   private renderSprites: boolean;
-  private readonly textureCache: Map<string, PIXI.Texture> = new Map();
+  private readonly textureCache: Map<string, Texture> = new Map();
 
   private readonly structuresInfos: Map<
     UnitType,
@@ -107,11 +107,11 @@ export class SpriteFactory {
 
   createGhostContainer(
     player: PlayerView,
-    ghostStage: PIXI.Container,
+    ghostStage: Container,
     pos: { x: number; y: number },
     structureType: UnitType,
-  ): PIXI.Container {
-    const parentContainer = new PIXI.Container();
+  ): Container {
+    const parentContainer = new Container();
     const texture = this.createTexture(
       structureType,
       player,
@@ -119,7 +119,7 @@ export class SpriteFactory {
       false,
       true,
     );
-    const sprite = new PIXI.Sprite(texture);
+    const sprite = new Sprite(texture);
     sprite.anchor.set(0.5);
     sprite.alpha = 0.5;
     parentContainer.addChild(sprite);
@@ -135,9 +135,9 @@ export class SpriteFactory {
 
   public createUnitContainer(
     unit: UnitView,
-    options: { type?: "icon" | "dot" | "level"; stage: PIXI.Container },
-  ): PIXI.Container {
-    const parentContainer = new PIXI.Container();
+    options: { type?: "icon" | "dot" | "level"; stage: Container },
+  ): Container {
+    const parentContainer = new Container();
     const tile = unit.tile();
     const worldPos = new Cell(this.game.x(tile), this.game.y(tile));
     const screenPos = this.transformHandler.worldToScreenCoordinates(worldPos);
@@ -159,13 +159,13 @@ export class SpriteFactory {
         isMarkedForDeletion,
         type === "icon",
       );
-      const sprite = new PIXI.Sprite(texture);
+      const sprite = new Sprite(texture);
       sprite.anchor.set(0.5);
       parentContainer.addChild(sprite);
     }
 
     if ((type === "icon" || type === "level") && unit.level() > 1) {
-      const text = new PIXI.BitmapText({
+      const text = new BitmapText({
         text: unit.level().toString(),
         style: { fontFamily: "round_6x6_modified", fontSize: 14 },
       });
@@ -205,7 +205,7 @@ export class SpriteFactory {
     isConstruction: boolean,
     isMarkedForDeletion: boolean,
     renderIcon: boolean,
-  ): PIXI.Texture {
+  ): Texture {
     const cacheKeyBase = isConstruction
       ? `construction-${type}`
       : `${this.theme.territoryColor(owner).toRgbString()}-${type}`;
@@ -227,7 +227,7 @@ export class SpriteFactory {
           shape,
           renderIcon,
         )
-      : PIXI.Texture.EMPTY;
+      : Texture.EMPTY;
     this.textureCache.set(cacheKey, texture);
     return texture;
   }
@@ -239,7 +239,7 @@ export class SpriteFactory {
     isMarkedForDeletion: boolean,
     shape: string,
     renderIcon: boolean,
-  ): PIXI.Texture {
+  ): Texture {
     const structureCanvas = document.createElement("canvas");
     let iconSize = ICON_SIZE[shape];
     if (!renderIcon) {
@@ -407,18 +407,18 @@ export class SpriteFactory {
       context.restore();
     }
 
-    return PIXI.Texture.from(structureCanvas);
+    return Texture.from(structureCanvas);
   }
 
   public createRange(
     type: UnitType,
-    stage: PIXI.Container,
+    stage: Container,
     pos: { x: number; y: number },
     level?: number,
-  ): PIXI.Container | null {
+  ): Container | null {
     if (stage === undefined) throw new Error("Not initialized");
-    const parentContainer = new PIXI.Container();
-    const circle = new PIXI.Graphics();
+    const parentContainer = new Container();
+    const circle = new Graphics();
     let radius = 0;
     switch (type) {
       case UnitType.SAMLauncher:

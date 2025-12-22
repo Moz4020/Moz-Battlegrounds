@@ -97,7 +97,7 @@ export class GameManager {
   }
 
   tick() {
-    const active = new Map<GameID, GameServer>();
+    const gamesToRemove: GameID[] = [];
     for (const [id, game] of this.games) {
       const phase = game.phase();
       if (phase === GamePhase.Active) {
@@ -121,10 +121,12 @@ export class GameManager {
         } catch (error) {
           this.log.error(`error ending game ${id}: ${error}`);
         }
-      } else {
-        active.set(id, game);
+        gamesToRemove.push(id);
       }
     }
-    this.games = active;
+    // Remove finished games in-place instead of recreating the Map
+    for (const id of gamesToRemove) {
+      this.games.delete(id);
+    }
   }
 }
