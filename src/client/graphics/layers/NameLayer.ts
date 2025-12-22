@@ -417,12 +417,17 @@ export class NameLayer implements Layer {
           let fraction = 0;
           let hasExtensionRequest = false;
           if (allianceView) {
-            const remaining = Math.max(
-              0,
-              allianceView.expiresAt - this.game.ticks(),
-            );
-            const duration = Math.max(1, this.game.config().allianceDuration());
-            fraction = Math.max(0, Math.min(1, remaining / duration));
+            // If permanent allies is enabled, show full alliance icon
+            if (this.game.config().permanentAllies()) {
+              fraction = 1;
+            } else {
+              const remaining = Math.max(
+                0,
+                allianceView.expiresAt - this.game.ticks(),
+              );
+              const duration = Math.max(1, this.game.config().allianceDuration());
+              fraction = Math.max(0, Math.min(1, remaining / duration));
+            }
             hasExtensionRequest = allianceView.hasExtensionRequest;
           }
 

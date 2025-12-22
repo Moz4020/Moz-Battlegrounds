@@ -213,6 +213,10 @@ export class PlayerInfoOverlay extends LitElement implements Layer {
   }
 
   private allianceExpirationText(alliance: AllianceView) {
+    // If permanent allies is enabled, show infinity symbol instead of countdown
+    if (this.game.config().permanentAllies()) {
+      return "∞";
+    }
     const { expiresAt } = alliance;
     const remainingTicks = expiresAt - this.game.ticks();
     let remainingSeconds = 0;

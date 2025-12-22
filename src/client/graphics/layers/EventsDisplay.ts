@@ -285,6 +285,9 @@ export class EventsDisplay extends LitElement implements Layer {
     const myPlayer = this.game.myPlayer();
     if (!myPlayer?.isAlive()) return;
 
+    // Don't show alliance expiration warnings when permanent allies is enabled
+    if (this.game.config().permanentAllies()) return;
+
     for (const alliance of myPlayer.alliances()) {
       if (
         alliance.expiresAt >

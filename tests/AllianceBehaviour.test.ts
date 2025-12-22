@@ -173,3 +173,27 @@ describe("AllianceBehavior.handleAllianceExtensionRequests", () => {
     expect(mockGame.addExecution).not.toHaveBeenCalled();
   });
 });
+
+describe("Permanent Allies - Alliance Expiration", () => {
+  let gameWithPermanent: Game;
+  let gameWithoutPermanent: Game;
+  let player1: Player;
+  let player2: Player;
+
+  beforeEach(async () => {
+    // Game WITH permanent allies enabled
+    gameWithPermanent = await setup("big_plains", {
+      permanentAllies: true,
+    });
+
+    // Game WITHOUT permanent allies enabled
+    gameWithoutPermanent = await setup("big_plains", {
+      permanentAllies: false,
+    });
+  });
+
+  it("should have permanentAllies config set correctly", () => {
+    expect(gameWithPermanent.config().permanentAllies()).toBe(true);
+    expect(gameWithoutPermanent.config().permanentAllies()).toBe(false);
+  });
+});

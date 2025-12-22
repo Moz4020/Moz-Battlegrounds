@@ -104,16 +104,22 @@ export class PlayerPanel extends LitElement implements Layer {
       if (myPlayer !== null && myPlayer.isAlive()) {
         this.actions = await myPlayer.actions(this.tile);
         if (this.actions?.interaction?.allianceExpiresAt !== undefined) {
-          const expiresAt = this.actions.interaction.allianceExpiresAt;
-          const remainingTicks = expiresAt - this.g.ticks();
-          const remainingSeconds = Math.max(0, Math.floor(remainingTicks / 10)); // 10 ticks per second
-
-          if (remainingTicks > 0) {
-            this.allianceExpirySeconds = remainingSeconds;
-            this.allianceExpiryText = renderDuration(remainingSeconds);
-          } else {
+          // If permanent allies is enabled, show infinity symbol
+          if (this.g.config().permanentAllies()) {
             this.allianceExpirySeconds = null;
-            this.allianceExpiryText = null;
+            this.allianceExpiryText = "∞";
+          } else {
+            const expiresAt = this.actions.interaction.allianceExpiresAt;
+            const remainingTicks = expiresAt - this.g.ticks();
+            const remainingSeconds = Math.max(0, Math.floor(remainingTicks / 10)); // 10 ticks per second
+
+            if (remainingTicks > 0) {
+              this.allianceExpirySeconds = remainingSeconds;
+              this.allianceExpiryText = renderDuration(remainingSeconds);
+            } else {
+              this.allianceExpirySeconds = null;
+              this.allianceExpiryText = null;
+            }
           }
         } else {
           this.allianceExpirySeconds = null;
