@@ -30,8 +30,11 @@ import { UserSettingModal } from "./UserSettingModal";
 import "./UsernameInput";
 import { UsernameInput } from "./UsernameInput";
 import { incrementGamesPlayed } from "./Utils";
+import "./components/baseComponents/AlertModal";
 import "./components/baseComponents/Button";
+import "./components/baseComponents/ConfirmModal";
 import "./components/baseComponents/Modal";
+import { showAlert } from "./components/baseComponents/AlertModal";
 import "./styles.css";
 
 declare global {
@@ -281,18 +284,6 @@ class Client {
   }
 
   private handleHash() {
-    const strip = () =>
-      history.replaceState(
-        null,
-        "",
-        window.location.pathname + window.location.search,
-      );
-
-    const alertAndStrip = (message: string) => {
-      alert(message);
-      strip();
-    };
-
     const hash = window.location.hash;
 
     // Decode the hash first to handle encoded characters
@@ -532,7 +523,10 @@ async function getTurnstileToken(): Promise<{
       "error-callback": (errorCode: string) => {
         window.turnstile.remove(widgetId);
         console.error(`Turnstile error: ${errorCode}`);
-        alert(`Turnstile error: ${errorCode}. Please refresh and try again.`);
+        showAlert(
+          `Turnstile error: ${errorCode}. Please refresh and try again.`,
+          "error",
+        );
         reject(new Error(`Turnstile failed: ${errorCode}`));
       },
     });

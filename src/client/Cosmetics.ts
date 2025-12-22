@@ -6,13 +6,14 @@ import {
   Pattern,
 } from "../core/CosmeticSchemas";
 import { createCheckoutSession, getApiBase } from "./Api";
+import { showAlert } from "./components/baseComponents/AlertModal";
 
 export async function handlePurchase(
   pattern: Pattern,
   colorPalette: ColorPalette | null,
 ) {
   if (pattern.product === null) {
-    alert("This pattern is not available for purchase.");
+    showAlert("This pattern is not available for purchase.", "error");
     return;
   }
 
@@ -21,7 +22,7 @@ export async function handlePurchase(
     colorPalette?.name ?? null,
   );
   if (url === false) {
-    alert("Failed to create checkout session.");
+    showAlert("Failed to create checkout session.", "error");
     return;
   }
 

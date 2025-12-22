@@ -1,5 +1,5 @@
 import { html, LitElement } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, query, state } from "lit/decorators.js";
 import exitIcon from "../../../../resources/images/ExitIconWhite.svg";
 import FastForwardIconSolid from "../../../../resources/images/FastForwardIconSolidWhite.svg";
 import pauseIcon from "../../../../resources/images/PauseIconWhite.svg";
@@ -9,6 +9,7 @@ import { EventBus } from "../../../core/EventBus";
 import { GameType } from "../../../core/game/Game";
 import { GameUpdateType } from "../../../core/game/GameUpdates";
 import { GameView } from "../../../core/game/GameView";
+import { ConfirmModal } from "../../components/baseComponents/ConfirmModal";
 import { PauseGameEvent } from "../../Transport";
 import { translateText } from "../../Utils";
 import { Layer } from "./Layer";
@@ -36,6 +37,9 @@ export class GameRightSidebar extends LitElement implements Layer {
   private timer: number = 0;
 
   private hasWinner = false;
+
+  @query("confirm-modal")
+  private confirmModal!: ConfirmModal;
 
   createRenderRoot() {
     return this;
@@ -98,10 +102,10 @@ export class GameRightSidebar extends LitElement implements Layer {
     this.eventBus.emit(new PauseGameEvent(this.isPaused));
   }
 
-  private onExitButtonClick() {
+  private async onExitButtonClick() {
     const isAlive = this.game.myPlayer()?.isAlive();
     if (isAlive) {
-      const isConfirmed = confirm(
+      const isConfirmed = await this.confirmModal.show(
         translateText("help_modal.exit_confirmation"),
       );
       if (!isConfirmed) return;
@@ -126,6 +130,7 @@ export class GameRightSidebar extends LitElement implements Layer {
         : "";
 
     return html`
+      <confirm-modal></confirm-modal>
       <aside
         class=${`w-fit flex flex-row items-center gap-3 py-2 px-3 bg-gray-800/70 backdrop-blur-sm shadow-xs rounded-lg transition-transform duration-300 ease-out transform text-white ${
           this._isVisible ? "translate-x-0" : "translate-x-full"
