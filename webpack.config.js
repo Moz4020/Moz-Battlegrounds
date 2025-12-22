@@ -161,10 +161,31 @@ export default async (env, argv) => {
       // Add optimization configuration for better caching
       runtimeChunk: "single",
       splitChunks: {
+        chunks: "all",
         cacheGroups: {
+          // Separate heavy libraries into their own chunks for better caching
+          pixi: {
+            test: /[\\/]node_modules[\\/](pixi\.js|pixi-filters)[\\/]/,
+            name: "pixi",
+            priority: 20,
+            chunks: "all",
+          },
+          lit: {
+            test: /[\\/]node_modules[\\/](lit|@lit)[\\/]/,
+            name: "lit",
+            priority: 15,
+            chunks: "all",
+          },
+          d3: {
+            test: /[\\/]node_modules[\\/]d3/,
+            name: "d3",
+            priority: 15,
+            chunks: "all",
+          },
           vendor: {
             test: /[\\/]node_modules[\\/]/,
             name: "vendors",
+            priority: 10,
             chunks: "all",
           },
         },

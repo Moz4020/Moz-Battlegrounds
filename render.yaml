@@ -2,6 +2,7 @@ services:
   - type: web
     name: moz-battlegrounds
     runtime: node
+    region: oregon
     plan: free
     buildCommand: npm ci --include=dev && npm run build-prod && npm run build:server
     startCommand: npm run start:render

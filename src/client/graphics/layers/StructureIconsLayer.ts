@@ -1,7 +1,7 @@
 import { extend } from "colord";
 import a11yPlugin from "colord/plugins/a11y";
 import { OutlineFilter } from "pixi-filters";
-import * as PIXI from "pixi.js";
+import { Assets, Container, Renderer, WebGLRenderer } from "pixi.js";
 import bitmapFont from "../../../../resources/fonts/round_6x6_modified.xml";
 import { Theme } from "../../../core/configuration/Config";
 import { EventBus } from "../../../core/EventBus";
@@ -47,9 +47,9 @@ class StructureRenderInfo {
   constructor(
     public unit: UnitView,
     public owner: PlayerID,
-    public iconContainer: PIXI.Container,
-    public levelContainer: PIXI.Container,
-    public dotContainer: PIXI.Container,
+    public iconContainer: Container,
+    public levelContainer: Container,
+    public dotContainer: Container,
     public level: number = 0,
     public underConstruction: boolean = true,
   ) {}
@@ -57,20 +57,20 @@ class StructureRenderInfo {
 
 export class StructureIconsLayer implements Layer {
   private ghostUnit: {
-    container: PIXI.Container;
-    range: PIXI.Container | null;
+    container: Container;
+    range: Container | null;
     rangeLevel?: number;
     buildableUnit: BuildableUnit;
   } | null = null;
   private pixicanvas: HTMLCanvasElement;
-  private iconsStage: PIXI.Container;
-  private ghostStage: PIXI.Container;
-  private levelsStage: PIXI.Container;
-  private rootStage: PIXI.Container = new PIXI.Container();
+  private iconsStage: Container;
+  private ghostStage: Container;
+  private levelsStage: Container;
+  private rootStage: Container = new Container();
   public playerActions: PlayerActions | null = null;
-  private dotsStage: PIXI.Container;
+  private dotsStage: Container;
   private readonly theme: Theme;
-  private renderer: PIXI.Renderer;
+  private renderer: Renderer;
   private renders: StructureRenderInfo[] = [];
   private readonly seenUnits: Set<UnitView> = new Set();
   private readonly mousePos = { x: 0, y: 0 };
@@ -104,28 +104,28 @@ export class StructureIconsLayer implements Layer {
 
   async setupRenderer() {
     try {
-      await PIXI.Assets.load(bitmapFont);
+      await Assets.load(bitmapFont);
     } catch (error) {
       console.error("Failed to load bitmap font:", error);
     }
-    this.renderer = new PIXI.WebGLRenderer();
+    this.renderer = new WebGLRenderer();
     this.pixicanvas = document.createElement("canvas");
     this.pixicanvas.width = window.innerWidth;
     this.pixicanvas.height = window.innerHeight;
 
-    this.iconsStage = new PIXI.Container();
+    this.iconsStage = new Container();
     this.iconsStage.position.set(0, 0);
     this.iconsStage.setSize(this.pixicanvas.width, this.pixicanvas.height);
 
-    this.ghostStage = new PIXI.Container();
+    this.ghostStage = new Container();
     this.ghostStage.position.set(0, 0);
     this.ghostStage.setSize(this.pixicanvas.width, this.pixicanvas.height);
 
-    this.levelsStage = new PIXI.Container();
+    this.levelsStage = new Container();
     this.levelsStage.position.set(0, 0);
     this.levelsStage.setSize(this.pixicanvas.width, this.pixicanvas.height);
 
-    this.dotsStage = new PIXI.Container();
+    this.dotsStage = new Container();
     this.dotsStage.position.set(0, 0);
     this.dotsStage.setSize(this.pixicanvas.width, this.pixicanvas.height);
 
@@ -632,21 +632,21 @@ export class StructureIconsLayer implements Layer {
     this.modifyVisibility(render);
   }
 
-  private createLevelSprite(unit: UnitView): PIXI.Container {
+  private createLevelSprite(unit: UnitView): Container {
     return this.factory.createUnitContainer(unit, {
       type: "level",
       stage: this.levelsStage,
     });
   }
 
-  private createDotSprite(unit: UnitView): PIXI.Container {
+  private createDotSprite(unit: UnitView): Container {
     return this.factory.createUnitContainer(unit, {
       type: "dot",
       stage: this.dotsStage,
     });
   }
 
-  private createIconSprite(unit: UnitView): PIXI.Container {
+  private createIconSprite(unit: UnitView): Container {
     return this.factory.createUnitContainer(unit, {
       type: "icon",
       stage: this.iconsStage,
