@@ -1,5 +1,9 @@
 {
 "name": "moz-battlegrounds",
+  "sideEffects": [
+    "*.css",
+    "d3-transition"
+  ],
   "scripts": {
     "build-dev": "webpack --config webpack.config.js --mode development",
     "build-prod": "webpack --config webpack.config.js --mode production",
