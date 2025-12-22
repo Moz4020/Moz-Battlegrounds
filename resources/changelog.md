@@ -1,44 +1,32 @@
 # Moz Battlegrounds Changelog
 
-## Version 0.2 - Branding Update
+## Version 1.0 - Initial Release
 
-### New Features
+Welcome to **Moz Battlegrounds**!
 
-- **New Logo** - Custom "Moz Battlegrounds" pixel-style logo
-- **Blue Theme** - New blue accent color throughout the UI
-- **Clean Branding** - Removed experimental build label
-
-### UI Improvements
-
-- Updated primary color scheme from red to blue (#1e5aa8)
-- Updated button colors, hovers, and selected states
-- Updated map card selection highlighting
-- New blue gradient logo design
-
----
-
-## Version 0.1 - Initial Release
-
-Welcome to Moz Battlegrounds!
-
-This is a private multiplayer strategy game for playing with friends, based on OpenFront.IO.
+A real-time strategy game focused on territorial control and alliance building. This is a fork of [OpenFront.IO](https://openfront.io) ([GitHub](https://github.com/openfrontio/OpenFrontIO)).
 
 ### Features
 
+- **Real-time Strategy Gameplay** - Expand your territory and engage in strategic battles
 - **Private Lobbies** - Create and join private lobbies with friends
-- **Single Player** - Practice against AI opponents
-- **Multiple Maps** - Choose from a variety of maps and regions
-- **Team Games** - Play Duos, Trios, Quads, and more
-- **Dark Theme** - Dark mode enabled by default for comfortable gaming
+- **Single Player** - Practice against AI opponents with customizable difficulty
+- **Multiple Maps** - Choose from 35+ maps across continental, regional, and fantasy categories
+- **Team Games** - Play Free-for-All, Duos, Trios, Quads, or Humans vs AI
+- **Alliance System** - Form alliances with other players for mutual defense
 
-### Changes from OpenFront.IO
+### Game Options
 
-- Removed public lobbies and matchmaking (private games only)
-- Removed account/login system (username-only mode)
-- Removed territory patterns and cosmetics
-- Removed seasonal themes
-- Simplified UI for private gaming experience
+- **Free Nukes** - Atom bombs cost zero gold
+- **Permanent Allies** - Alliances never expire
+- **Instant Build** - Buildings complete immediately
+- **Infinite Gold/Troops** - Unlimited resources
+- **Random Spawn** - Spawn at random locations
+- **Compact Map** - Smaller map for faster games
+- **Game Timer** - Set maximum game duration
 
 ### Credits
 
-Based on [OpenFront.IO](https://github.com/openfrontio/OpenFrontIO) - an open source multiplayer strategy game.
+Based on [OpenFront.IO](https://openfront.io) - an open source multiplayer strategy game.
+
+Fork maintained by Moz.
