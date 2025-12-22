@@ -1,4 +1,5 @@
-import { Execution, Game, Player, PlayerID } from "../game/Game";
+import { Execution, Game, Player, PlayerID, PlayerType } from "../game/Game";
+import { NationChatResponseExecution } from "./nation/NationChatResponseExecution";
 
 export class QuickChatExecution implements Execution {
   private recipient: Player;
@@ -13,7 +14,7 @@ export class QuickChatExecution implements Execution {
     private target: PlayerID | undefined,
   ) {}
 
-  init(mg: Game, ticks: number): void {
+  init(mg: Game, _ticks: number): void {
     this.mg = mg;
     if (!mg.hasPlayer(this.recipientID)) {
       console.warn(
@@ -26,7 +27,7 @@ export class QuickChatExecution implements Execution {
     this.recipient = mg.player(this.recipientID);
   }
 
-  tick(ticks: number): void {
+  tick(_ticks: number): void {
     const message = this.getMessageFromKey(this.quickChatKey);
 
     this.mg.displayChat(
@@ -50,6 +51,21 @@ export class QuickChatExecution implements Execution {
     console.log(
       `[QuickChat] ${this.sender.name} → ${this.recipient.displayName}: ${message}`,
     );
+
+    // Trigger AI response if recipient is a Nation (not Bot)
+    if (
+      this.recipient.type() === PlayerType.Nation &&
+      this.sender.type() === PlayerType.Human
+    ) {
+      this.mg.addExecution(
+        new NationChatResponseExecution(
+          this.recipient,
+          this.sender.id(),
+          this.quickChatKey,
+          this.target,
+        ),
+      );
+    }
 
     this.active = false;
   }

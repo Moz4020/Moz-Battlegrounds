@@ -90,3 +90,14 @@
   gap: 6px;
   padding-right: 4px;
 }
+
+.chat-ai-notice {
+  background: linear-gradient(90deg, #2a3a4a 0%, #3a4a5a 100%);
+  color: #8ec8ff;
+  padding: 10px 16px;
+  margin: 0 12px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  text-align: center;
+  border: 1px solid #4a6a8a;
+}

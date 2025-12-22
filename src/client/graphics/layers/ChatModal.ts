@@ -67,17 +67,58 @@ export class ChatModal extends LitElement {
     { id: "warnings" },
   ];
 
+  // Simplified categories for AI (Nation) recipients
+  private aiCategories = [{ id: "help" }, { id: "attack" }];
+
+  // Phrases that AI Nations can respond to
+  private aiValidPhrases: Record<string, string[]> = {
+    help: ["troops", "gold"],
+    attack: ["attack"],
+  };
+
+  /**
+   * Check if the recipient is an AI Nation
+   */
+  private isRecipientNation(): boolean {
+    return this.recipient?.data?.playerType === PlayerType.Nation;
+  }
+
+  /**
+   * Get categories based on whether recipient is AI or human
+   */
+  private getActiveCategories() {
+    return this.isRecipientNation() ? this.aiCategories : this.categories;
+  }
+
   private getPhrasesForCategory(categoryId: string) {
-    return quickChatPhrases[categoryId] ?? [];
+    const phrases = quickChatPhrases[categoryId] ?? [];
+
+    // Filter to AI-valid phrases if recipient is a Nation
+    if (this.isRecipientNation()) {
+      const validPhraseKeys = this.aiValidPhrases[categoryId] ?? [];
+      return phrases.filter((p) => validPhraseKeys.includes(p.key));
+    }
+
+    return phrases;
   }
 
   render() {
+    const activeCategories = this.getActiveCategories();
+    const modalTitle = this.isRecipientNation()
+      ? translateText("chat.title_ai")
+      : translateText("chat.title");
+
     return html`
-      <o-modal modal-title="${translateText("chat.title")}">
+      <o-modal modal-title="${modalTitle}">
+        ${this.isRecipientNation()
+        ? html`<div class="chat-ai-notice">
+              ${translateText("chat.ai_notice")}
+            </div>`
+        : null}
         <div class="chat-columns">
           <div class="chat-column">
             <div class="column-title">${translateText("chat.category")}</div>
-            ${this.categories.map(
+            ${activeCategories.map(
       (category) => html`
                 <button
                   class="chat-option-button ${this.selectedCategory ===
@@ -175,7 +216,7 @@ export class ChatModal extends LitElement {
 
   initEventBus(eventBus: EventBus) {
     this.eventBus = eventBus;
-    eventBus.on(CloseViewEvent, (e) => {
+    eventBus.on(CloseViewEvent, () => {
       if (!this.hidden) {
         this.close();
       }

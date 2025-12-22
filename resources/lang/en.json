@@ -481,6 +481,8 @@
   },
   "chat": {
     "title": "Quick Chat",
+    "title_ai": "Chat with Nation",
+    "ai_notice": "Nations can respond to requests for troops, gold, or attacks.",
     "to": "Sent {user}: {msg}",
     "from": "From {user}: {msg}",
     "category": "Category",
