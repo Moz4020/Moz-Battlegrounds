@@ -26,6 +26,15 @@ const EMOJI_RELATION_TOO_LOW = (["🥱", "🤦‍♂️"] as const).map(emojiId)
 const EMOJI_TARGET_ME = (["🥺", "💀"] as const).map(emojiId);
 const EMOJI_TARGET_ALLY = (["🕊️", "👎"] as const).map(emojiId);
 const EMOJI_HECKLE = (["🤡", "😡"] as const).map(emojiId);
+// New emoji constants for smart assist refusals
+const EMOJI_BUSY = (["⏳", "🛡️", "⚠️"] as const).map(emojiId);
+const EMOJI_TOO_STRONG = (["😱", "💀", "🆘"] as const).map(emojiId);
+const EMOJI_LOW_TROOPS = (["😞", "🥺", "🏳️"] as const).map(emojiId);
+const EMOJI_REJECT_CHANCE = (["🥱", "😞", "❓"] as const).map(emojiId);
+
+// Thresholds for smart assist decisions
+const TARGET_TOO_STRONG_RATIO = 2.0; // Target has 2x more troops
+const LOW_TROOPS_RATIO = 0.3; // AI has less than 30% of max troops
 
 export class AiAttackBehavior {
   private botAttackTroopsSent: number = 0;
@@ -39,6 +48,134 @@ export class AiAttackBehavior {
     private reserveRatio: number,
     private expandRatio: number,
   ) {}
+
+  /**
+   * Check if the AI is currently busy (under significant attack)
+   */
+  private isUnderHeavyAttack(): boolean {
+    const incomingAttacks = this.player.incomingAttacks();
+    if (incomingAttacks.length === 0) return false;
+
+    // Calculate total incoming troops
+    const totalIncomingTroops = incomingAttacks.reduce(
+      (sum, attack) => sum + attack.troops(),
+      0,
+    );
+
+    // Consider "heavy attack" if incoming troops > 20% of our troops
+    return totalIncomingTroops > this.player.troops() * 0.2;
+  }
+
+  /**
+   * Check if the target is too strong for the AI to attack
+   */
+  private isTargetTooStrong(target: Player): boolean {
+    return target.troops() > this.player.troops() * TARGET_TOO_STRONG_RATIO;
+  }
+
+  /**
+   * Check if the AI has enough troops to spare for assisting
+   */
+  private hasEnoughTroopsToAssist(): boolean {
+    const maxTroops = this.game.config().maxTroops(this.player);
+    const ratio = this.player.troops() / maxTroops;
+    return ratio >= LOW_TROOPS_RATIO;
+  }
+
+  /**
+   * Get all friendly players (allies + teammates) who might need assistance
+   */
+  private getFriendlyPlayers(): Player[] {
+    const allies = this.player.allies();
+    const teammates = this.game
+      .players()
+      .filter((p) => p !== this.player && this.player.isOnSameTeam(p));
+
+    // Combine and deduplicate (in case someone is both ally and teammate)
+    const friendlySet = new Set([...allies, ...teammates]);
+    return Array.from(friendlySet);
+  }
+
+  /**
+   * Calculate the chance of assisting an ally/teammate based on various factors
+   * Returns a percentage (0-100) representing likelihood to assist
+   */
+  private getAssistChance(ally: Player, target: Player): number {
+    const { difficulty } = this.game.config().gameConfig();
+    const isTeammate = this.player.isOnSameTeam(ally);
+    const isAllied = this.player.isAlliedWith(ally);
+
+    // Base chance based on difficulty
+    let baseChance: number;
+    switch (difficulty) {
+      case Difficulty.Easy:
+        // Easy AI is very helpful
+        baseChance = 90;
+        break;
+      case Difficulty.Medium:
+        baseChance = 70;
+        break;
+      case Difficulty.Hard:
+        // Hard AI is more strategic
+        baseChance = 50;
+        break;
+      default:
+        assertNever(difficulty);
+    }
+
+    // Teammates get highest priority (almost always help)
+    if (isTeammate) {
+      baseChance *= 1.3; // 30% bonus for teammates
+    } else if (isAllied) {
+      baseChance *= 1.0; // No modifier for allies
+    }
+    // Note: If neither teammate nor allied, they shouldn't be in the friendly list
+
+    // Reduce chance if target is stronger than us
+    const troopRatio = this.player.troops() / target.troops();
+    if (troopRatio < 0.5) {
+      // We have less than half their troops - very reluctant
+      baseChance *= 0.3;
+    } else if (troopRatio < 1.0) {
+      // We have fewer troops - somewhat reluctant
+      baseChance *= 0.6;
+    }
+    // If we have more troops, no penalty
+
+    // Reduce chance if under attack (but less reduction for teammates)
+    if (this.player.incomingAttacks().length > 0) {
+      baseChance *= isTeammate ? 0.7 : 0.5; // Teammates still get some priority
+    }
+
+    // Reduce chance if we don't share a border with target
+    if (!this.player.sharesBorderWith(target)) {
+      baseChance *= 0.7; // Less likely to send boats
+    }
+
+    return Math.min(100, Math.max(0, baseChance));
+  }
+
+  /**
+   * Send a chat message to an ally about assist decision
+   */
+  private sendAssistChatMessage(
+    ally: Player,
+    messageKey: string,
+    accepted: boolean,
+  ): void {
+    // Only send to human players
+    if (ally.type() !== PlayerType.Human) return;
+
+    // Use displayChat to show in the game log
+    this.game.displayChat(
+      messageKey,
+      "assist",
+      ally.id(),
+      this.player.id(),
+      false, // isFrom = false (AI is responding TO the ally)
+      ally.id(),
+    );
+  }
 
   private emoji(player: Player, emoji: number) {
     if (player.type() !== PlayerType.Human) return;
@@ -116,25 +253,91 @@ export class AiAttackBehavior {
   }
 
   assistAllies() {
-    for (const ally of this.player.allies()) {
-      if (ally.targets().length === 0) continue;
-      if (this.player.relation(ally) < Relation.Friendly) {
-        this.emoji(ally, this.random.randElement(EMOJI_RELATION_TOO_LOW));
+    // Get all friendly players (allies + teammates)
+    const friendlyPlayers = this.getFriendlyPlayers();
+
+    for (const friendly of friendlyPlayers) {
+      if (friendly.targets().length === 0) continue;
+
+      const isTeammate = this.player.isOnSameTeam(friendly);
+
+      // Check if relation is too low (skip for teammates - they're always friendly)
+      if (!isTeammate && this.player.relation(friendly) < Relation.Friendly) {
+        this.emoji(friendly, this.random.randElement(EMOJI_RELATION_TOO_LOW));
+        this.sendAssistChatMessage(friendly, "relation_too_low", false);
         continue;
       }
-      for (const target of ally.targets()) {
+
+      for (const target of friendly.targets()) {
+        // Don't attack ourselves
         if (target === this.player) {
-          this.emoji(ally, this.random.randElement(EMOJI_TARGET_ME));
+          this.emoji(friendly, this.random.randElement(EMOJI_TARGET_ME));
+          this.sendAssistChatMessage(friendly, "target_is_me", false);
           continue;
         }
+
+        // Don't attack our friends (but for teammates, be more aggressive)
         if (this.player.isFriendly(target)) {
-          this.emoji(ally, this.random.randElement(EMOJI_TARGET_ALLY));
+          // If both are teammates, this is a conflict - don't attack
+          if (this.player.isOnSameTeam(target)) {
+            this.emoji(friendly, this.random.randElement(EMOJI_TARGET_ALLY));
+            this.sendAssistChatMessage(friendly, "target_is_teammate", false);
+            continue;
+          }
+          // If target is just an ally (not teammate), and requester is teammate, might still help
+          if (!isTeammate) {
+            this.emoji(friendly, this.random.randElement(EMOJI_TARGET_ALLY));
+            this.sendAssistChatMessage(friendly, "target_is_friend", false);
+            continue;
+          }
+          // Teammate asking to attack our ally - conflicting loyalties, decline
+          this.emoji(friendly, this.random.randElement(EMOJI_TARGET_ALLY));
+          this.sendAssistChatMessage(friendly, "target_is_ally", false);
           continue;
         }
-        // All checks passed, assist them
-        this.player.updateRelation(ally, -20);
+
+        // Smart check 1: Are we under heavy attack? (Busy)
+        // Teammates get a pass on this check more often
+        if (this.isUnderHeavyAttack() && !(isTeammate && this.random.chance(2))) {
+          this.emoji(friendly, this.random.randElement(EMOJI_BUSY));
+          this.sendAssistChatMessage(friendly, "busy_under_attack", false);
+          continue;
+        }
+
+        // Smart check 2: Is target too strong?
+        // Teammates get a slightly higher tolerance
+        const strengthThreshold = isTeammate
+          ? TARGET_TOO_STRONG_RATIO * 1.25
+          : TARGET_TOO_STRONG_RATIO;
+        if (target.troops() > this.player.troops() * strengthThreshold) {
+          this.emoji(friendly, this.random.randElement(EMOJI_TOO_STRONG));
+          this.sendAssistChatMessage(friendly, "target_too_strong", false);
+          continue;
+        }
+
+        // Smart check 3: Do we have enough troops?
+        if (!this.hasEnoughTroopsToAssist()) {
+          this.emoji(friendly, this.random.randElement(EMOJI_LOW_TROOPS));
+          this.sendAssistChatMessage(friendly, "low_troops", false);
+          continue;
+        }
+
+        // Calculate chance-based decision
+        const assistChance = this.getAssistChance(friendly, target);
+        const roll = this.random.nextInt(0, 100);
+
+        if (roll > assistChance) {
+          // Failed the chance roll - decline to assist
+          this.emoji(friendly, this.random.randElement(EMOJI_REJECT_CHANCE));
+          this.sendAssistChatMessage(friendly, "declined", false);
+          continue;
+        }
+
+        // All checks passed and chance succeeded - assist them!
+        this.player.updateRelation(friendly, -20);
         this.sendAttack(target);
-        this.emoji(ally, this.random.randElement(EMOJI_ASSIST_ACCEPT));
+        this.emoji(friendly, this.random.randElement(EMOJI_ASSIST_ACCEPT));
+        this.sendAssistChatMessage(friendly, "accepted", true);
         return;
       }
     }

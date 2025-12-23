@@ -206,6 +206,7 @@ export class NationChatBehavior {
    * Returns a percentage (0-100)
    */
   private getAcceptChance(sender: Player, isAttackRequest: boolean): number {
+    const isTeammate = this.player.isOnSameTeam(sender);
     const isAllied = this.player.isAlliedWith(sender);
     const relation = this.player.relation(sender);
     const { difficulty } = this.game.config().gameConfig();
@@ -228,7 +229,12 @@ export class NationChatBehavior {
 
     let baseChance: number;
 
-    if (isAllied) {
+    if (isTeammate) {
+      // Teammates get highest priority: 90-99% for resources, 85-95% for attacks
+      baseChance = isAttackRequest
+        ? this.random.nextInt(85, 95)
+        : this.random.nextInt(90, 99);
+    } else if (isAllied) {
       // Allied: 80-95% for resources, 70-85% for attacks
       baseChance = isAttackRequest
         ? this.random.nextInt(70, 85)
@@ -262,9 +268,9 @@ export class NationChatBehavior {
       }
     }
 
-    // Check if we're under attack - less likely to help
+    // Check if we're under attack - less likely to help (but teammates still get priority)
     if (this.player.incomingAttacks().length > 0) {
-      baseChance *= 0.5;
+      baseChance *= isTeammate ? 0.8 : 0.5; // Teammates only lose 20%, others lose 50%
     }
 
     return Math.min(100, Math.max(0, baseChance * difficultyMod));
@@ -274,15 +280,18 @@ export class NationChatBehavior {
    * Calculate how many troops to donate based on relationship
    */
   private calculateTroopDonation(sender: Player): number {
+    const isTeammate = this.player.isOnSameTeam(sender);
     const isAllied = this.player.isAlliedWith(sender);
     const relation = this.player.relation(sender);
 
-    // Never give more than 25% of troops
-    const maxDonation = this.player.troops() * 0.25;
+    // Never give more than 25% of troops (but teammates can get up to 30%)
+    const maxDonation = this.player.troops() * (isTeammate ? 0.3 : 0.25);
 
     let donationPercent: number;
 
-    if (isAllied) {
+    if (isTeammate) {
+      donationPercent = 0.2; // 20% for teammates (highest)
+    } else if (isAllied) {
       donationPercent = 0.15; // 15% for allies
     } else if (relation === Relation.Friendly) {
       donationPercent = 0.08; // 8% for friendly
@@ -298,15 +307,18 @@ export class NationChatBehavior {
    * Calculate how much gold to donate based on relationship
    */
   private calculateGoldDonation(sender: Player): bigint {
+    const isTeammate = this.player.isOnSameTeam(sender);
     const isAllied = this.player.isAlliedWith(sender);
     const relation = this.player.relation(sender);
 
-    // Never give more than 25% of gold
-    const maxDonation = this.player.gold() / 4n;
+    // Never give more than 25% of gold (but teammates can get up to 30%)
+    const maxDonation = this.player.gold() / (isTeammate ? 3n : 4n);
 
     let donationPercent: number;
 
-    if (isAllied) {
+    if (isTeammate) {
+      donationPercent = 0.2; // 20% for teammates (highest)
+    } else if (isAllied) {
       donationPercent = 0.15; // 15% for allies
     } else if (relation === Relation.Friendly) {
       donationPercent = 0.08; // 8% for friendly
