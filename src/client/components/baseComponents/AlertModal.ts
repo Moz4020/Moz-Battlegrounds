@@ -83,42 +83,6 @@ export class AlertModal extends LitElement {
       letter-spacing: 2px;
       display: flex;
       align-items: center;
-      gap: 10px;
-    }
-
-    .icon-container {
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .icon-container.error {
-      background: rgba(239, 68, 68, 0.2);
-      color: #fca5a5;
-      border: 1px solid rgba(239, 68, 68, 0.2);
-    }
-
-    .icon-container.warning {
-      background: rgba(245, 158, 11, 0.2);
-      color: #fcd34d;
-      border: 1px solid rgba(245, 158, 11, 0.2);
-    }
-
-    .icon-container.info {
-      background: rgba(59, 130, 246, 0.2);
-      color: #93c5fd;
-      border: 1px solid rgba(59, 130, 246, 0.2);
-    }
-
-    .icon-container.success {
-      background: rgba(34, 197, 94, 0.2);
-      color: #86efac;
-      border: 1px solid rgba(34, 197, 94, 0.2);
     }
 
     .modal-body {
@@ -242,7 +206,6 @@ export class AlertModal extends LitElement {
         <div class="modal-container">
           <div class="modal-header">
             <h3 class="modal-title">
-              <span class="icon-container ${this.alertType}">${this.getIcon()}</span>
               ${this.getTitle()}
             </h3>
           </div>
