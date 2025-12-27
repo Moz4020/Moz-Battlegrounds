@@ -36,8 +36,8 @@ export class GameServer {
   private disconnectedTimeout = 1 * 30 * 1000; // 30 seconds
 
   // Maximum number of turns to retain in memory for client rejoin support.
-  // At ~20 turns/sec, 1000 turns = ~50 seconds of gameplay history.
-  private readonly maxTurnRetention = 1000;
+  // At ~20 turns/sec, 1200 turns = ~60 seconds of gameplay history.
+  private readonly maxTurnRetention = 1200;
 
   // Tracks the first turn number still in the turns array (for calculating offsets)
   private turnOffset = 0;

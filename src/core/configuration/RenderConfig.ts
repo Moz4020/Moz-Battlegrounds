@@ -1,3 +1,4 @@
+import { JWK } from "jose";
 import { GameEnv } from "./Config";
 import { DefaultServerConfig } from "./DefaultConfig";
 
@@ -41,6 +42,17 @@ export class RenderServerConfig extends DefaultServerConfig {
 
   jwtAudience(): string {
     return "localhost";
+  }
+
+  // Skip network fetch for JWK - auth is bypassed in dev mode anyway
+  // This speeds up cold starts significantly
+  async jwkPublicKey(): Promise<JWK> {
+    // Return a dummy Ed25519 public key - not used since auth is bypassed
+    return {
+      kty: "OKP",
+      crv: "Ed25519",
+      x: "dummy-key-not-used-in-dev-mode",
+    };
   }
 
   gitCommit(): string {
