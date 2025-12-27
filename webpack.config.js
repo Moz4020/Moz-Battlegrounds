@@ -45,7 +45,13 @@ export default async (env, argv) => {
         },
         {
           test: /\.ts$/,
-          use: "ts-loader",
+          use: {
+            loader: "esbuild-loader",
+            options: {
+              loader: "ts",
+              target: "es2020",
+            },
+          },
           exclude: /node_modules/,
         },
         {
@@ -153,9 +159,15 @@ export default async (env, argv) => {
         ],
         options: { concurrency: 100 },
       }),
-      new ESLintPlugin({
-        context: __dirname,
-      }),
+      // Skip ESLint in production builds to reduce memory usage
+      // ESLint runs in CI anyway
+      ...(isProduction
+        ? []
+        : [
+            new ESLintPlugin({
+              context: __dirname,
+            }),
+          ]),
     ],
     optimization: {
       // Add optimization configuration for better caching
