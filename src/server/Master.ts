@@ -62,9 +62,17 @@ export async function startMaster() {
   }
 
   log.info(`Primary ${process.pid} is running`);
+
+  // Start listening FIRST so health checks can respond immediately
+  // This is critical for Render deployment where health checks run during startup
+  const PORT = parseInt(process.env.PORT ?? "3000");
+  server.listen(PORT, () => {
+    log.info(`Master HTTP server listening on port ${PORT}`);
+  });
+
   log.info(`Setting up ${config.numWorkers()} workers...`);
 
-  // Fork workers
+  // Fork workers (after server is listening)
   for (let i = 0; i < config.numWorkers(); i++) {
     const worker = cluster.fork({
       WORKER_ID: i,
@@ -107,11 +115,6 @@ export async function startMaster() {
     log.info(
       `Restarted worker ${workerId} (New PID: ${newWorker.process.pid})`,
     );
-  });
-
-  const PORT = parseInt(process.env.PORT ?? "3000");
-  server.listen(PORT, () => {
-    log.info(`Master HTTP server listening on port ${PORT}`);
   });
 
   // Handle WebSocket upgrade requests and proxy to the correct worker
