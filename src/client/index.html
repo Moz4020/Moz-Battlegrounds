@@ -14,11 +14,14 @@
       href="../../resources/images/Favicon.svg"
     />
     <!-- Pixel Font for Logo -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
 
-<!-- SEO -->
+    <!-- SEO -->
     <meta
       name="description"
       content="Conquer the world in this multiplayer battle royale! Expand your nation, eliminate opponents, and dominate the map in this fast-paced IO game."
@@ -88,7 +91,6 @@
       .component-hideable:has(> .parent-hidden) {
         display: none;
       }
-
     </style>
 
     <!-- Immediate execution to prevent FOUC -->
@@ -96,7 +98,7 @@
       document.documentElement.className = "preload";
     </script>
 
-<!-- Cloudflare Turnstile -->
+    <!-- Cloudflare Turnstile -->
     <script
       src="https://challenges.cloudflare.com/turnstile/v0/api.js"
       async
@@ -138,12 +140,14 @@
             font-family="'Press Start 2P', 'Courier New', monospace"
             font-size="38"
             font-weight="bold"
-            style="letter-spacing: 4px;"
-          >MOZ BATTLEGROUNDS</text>
+            style="letter-spacing: 4px"
+          >
+            MOZ BATTLEGROUNDS
+          </text>
         </svg>
       </div>
     </header>
-<div class="bg-image"></div>
+    <div class="bg-image"></div>
     <div
       id="turnstile-container"
       class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999]"
@@ -151,7 +155,6 @@
 
     <main class="flex justify-center flex-grow">
       <div class="container pt-8">
-        
         <div class="menu-card">
           <div class="container__row">
             <flag-input class="w-[20%] md:w-[20%]"></flag-input>
@@ -248,7 +251,7 @@
       </div>
     </div>
 
-<!-- Footer section -->
+    <!-- Footer section -->
     <footer
       class="flex justify-center px-4 py-4 bg-[var(--boxBackgroundColor)] backdrop-blur-sm"
     >
@@ -262,14 +265,16 @@
           data-i18n="main.privacy_policy"
           class="hover:text-white transition-colors"
           target="_blank"
-        >Privacy Policy</a>
+          >Privacy Policy</a
+        >
         <span class="hidden sm:inline">•</span>
         <a
           href="/terms-of-service.html"
           data-i18n="main.terms_of_service"
           class="hover:text-white transition-colors"
           target="_blank"
-        >Terms of Service</a>
+          >Terms of Service</a
+        >
       </div>
     </footer>
     <!-- Game modals and overlays -->
@@ -317,7 +322,7 @@
         </button>
       </div>
     </div>
-<!-- Scripts -->
+    <!-- Scripts -->
     <script>
       // Remove preload class after everything is loaded
       window.addEventListener("load", function () {

@@ -36,7 +36,9 @@ export function assignTeams(
   }
 
   // Filter out manually assigned players for auto-assignment
-  const remainingPlayers = players.filter((p) => !manuallyAssignedPlayers.has(p));
+  const remainingPlayers = players.filter(
+    (p) => !manuallyAssignedPlayers.has(p),
+  );
 
   // Group remaining players by clan
   const clanGroups = new Map<string, PlayerInfo[]>();

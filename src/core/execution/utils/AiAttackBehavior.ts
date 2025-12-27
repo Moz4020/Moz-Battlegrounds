@@ -298,7 +298,10 @@ export class AiAttackBehavior {
 
         // Smart check 1: Are we under heavy attack? (Busy)
         // Teammates get a pass on this check more often
-        if (this.isUnderHeavyAttack() && !(isTeammate && this.random.chance(2))) {
+        if (
+          this.isUnderHeavyAttack() &&
+          !(isTeammate && this.random.chance(2))
+        ) {
           this.emoji(friendly, this.random.randElement(EMOJI_BUSY));
           this.sendAssistChatMessage(friendly, "busy_under_attack", false);
           continue;

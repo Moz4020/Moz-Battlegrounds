@@ -425,7 +425,10 @@ export class NameLayer implements Layer {
                 0,
                 allianceView.expiresAt - this.game.ticks(),
               );
-              const duration = Math.max(1, this.game.config().allianceDuration());
+              const duration = Math.max(
+                1,
+                this.game.config().allianceDuration(),
+              );
               fraction = Math.max(0, Math.min(1, remaining / duration));
             }
             hasExtensionRequest = allianceView.hasExtensionRequest;

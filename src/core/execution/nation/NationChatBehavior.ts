@@ -170,10 +170,7 @@ export class NationChatBehavior {
     }
 
     // Don't attack if we're friendly with the target (unless we're allied with sender)
-    if (
-      this.player.isFriendly(target) &&
-      !this.player.isAlliedWith(sender)
-    ) {
+    if (this.player.isFriendly(target) && !this.player.isAlliedWith(sender)) {
       this.sendEmoji(sender, this.random.randElement(EMOJI_REJECT_NEUTRAL));
       return true;
     }

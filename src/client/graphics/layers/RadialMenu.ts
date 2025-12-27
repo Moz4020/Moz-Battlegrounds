@@ -1,6 +1,6 @@
 import { color as d3color, rgb } from "d3-color";
 import { select, Selection } from "d3-selection";
-import { arc, pie, Arc, PieArcDatum } from "d3-shape";
+import { arc, Arc, pie, PieArcDatum } from "d3-shape";
 import "d3-transition"; // Required for .transition() to work on selections
 import backIcon from "../../../../resources/images/BackIconWhite.svg";
 import { EventBus, GameEvent } from "../../../core/EventBus";
@@ -324,7 +324,10 @@ export class RadialMenu implements Layer {
           return itemColor;
         }
 
-        return d3color(itemColor)?.copy({ opacity: opacity })?.toString() ?? itemColor;
+        return (
+          d3color(itemColor)?.copy({ opacity: opacity })?.toString() ??
+          itemColor
+        );
       })
       .attr("stroke", "#ffffff")
       .attr("stroke-width", "2")
@@ -1008,7 +1011,8 @@ export class RadialMenu implements Layer {
         // Update path appearance
         path.attr(
           "fill",
-          d3color(itemColor)?.copy({ opacity: opacity })?.toString() ?? itemColor,
+          d3color(itemColor)?.copy({ opacity: opacity })?.toString() ??
+            itemColor,
         );
         path.style("opacity", disabled ? 0.5 : 1);
         path.style("cursor", disabled ? "not-allowed" : "pointer");

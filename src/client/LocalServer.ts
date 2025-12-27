@@ -8,9 +8,7 @@ import {
   ServerStartGameMessage,
   Turn,
 } from "../core/Schemas";
-import {
-  decompressGameRecord,
-} from "../core/Util";
+import { decompressGameRecord } from "../core/Util";
 import { LobbyConfig } from "./ClientGameRunner";
 import { ReplaySpeedChangeEvent } from "./InputHandler";
 import { defaultReplaySpeedMultiplier } from "./utilities/ReplaySpeedMultiplier";
@@ -41,7 +39,7 @@ export class LocalServer {
     private lobbyConfig: LobbyConfig,
     private isReplay: boolean,
     private eventBus: EventBus,
-  ) { }
+  ) {}
 
   public updateCallback(
     clientConnect: () => void,

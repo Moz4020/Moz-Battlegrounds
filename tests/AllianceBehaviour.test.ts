@@ -177,8 +177,6 @@ describe("AllianceBehavior.handleAllianceExtensionRequests", () => {
 describe("Permanent Allies - Alliance Expiration", () => {
   let gameWithPermanent: Game;
   let gameWithoutPermanent: Game;
-  let player1: Player;
-  let player2: Player;
 
   beforeEach(async () => {
     // Game WITH permanent allies enabled

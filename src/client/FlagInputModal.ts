@@ -37,16 +37,16 @@ export class FlagInputModal extends LitElement {
           class="flex flex-wrap justify-evenly gap-[1rem] overflow-y-auto overflow-x-hidden h-[90%]"
         >
           ${this.isModalOpen
-        ? Countries.filter(
-          (country) =>
-            !country.restricted && this.includedInSearch(country),
-        ).map(
-          (country) => html`
+            ? Countries.filter(
+                (country) =>
+                  !country.restricted && this.includedInSearch(country),
+              ).map(
+                (country) => html`
                   <button
                     @click=${() => {
-              this.setFlag(country.code);
-              this.close();
-            }}
+                      this.setFlag(country.code);
+                      this.close();
+                    }}
                     class="text-center cursor-pointer border-none bg-none opacity-70 
                   w-[calc(100%/2-15px)] sm:w-[calc(100%/4-15px)] 
                   md:w-[calc(100%/6-15px)] lg:w-[calc(100%/8-15px)] 
@@ -56,18 +56,18 @@ export class FlagInputModal extends LitElement {
                       class="country-flag w-full h-auto"
                       src="/flags/${country.code}.svg"
                       @error=${(e: Event) => {
-              const img = e.currentTarget as HTMLImageElement;
-              const fallback = "/flags/xx.svg";
-              if (img.src && !img.src.endsWith(fallback)) {
-                img.src = fallback;
-              }
-            }}
+                        const img = e.currentTarget as HTMLImageElement;
+                        const fallback = "/flags/xx.svg";
+                        if (img.src && !img.src.endsWith(fallback)) {
+                          img.src = fallback;
+                        }
+                      }}
                     />
                     <span class="country-name">${country.name}</span>
                   </button>
                 `,
-        )
-        : html``}
+              )
+            : html``}
         </div>
       </o-modal>
     `;

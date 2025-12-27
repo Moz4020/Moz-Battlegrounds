@@ -4,7 +4,6 @@ import rateLimit from "express-rate-limit";
 import http from "http";
 import net from "net";
 import path from "path";
-import { fileURLToPath } from "url";
 import { getServerConfigFromServer } from "../core/configuration/ConfigLoader";
 import { ID } from "../core/Schemas";
 import { logger } from "./Logger";
@@ -17,8 +16,6 @@ const server = http.createServer(app);
 
 const log = logger.child({ comp: "m" });
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 app.use(express.json());
 app.use(
   express.static(path.join(process.cwd(), "static"), {
@@ -119,15 +116,17 @@ export async function startMaster() {
 
   // Handle WebSocket upgrade requests and proxy to the correct worker
   server.on("upgrade", (req, socket, head) => {
-    const url = req.url || "";
+    const url = req.url ?? "";
     const match = url.match(/^\/w(\d+)/);
-    
+
     if (match) {
       const workerIndex = parseInt(match[1]);
       const workerPort = config.workerPortByIndex(workerIndex);
-      
-      log.info(`Proxying WebSocket upgrade to worker ${workerIndex} on port ${workerPort}`);
-      
+
+      log.info(
+        `Proxying WebSocket upgrade to worker ${workerIndex} on port ${workerPort}`,
+      );
+
       // Create a TCP connection to the worker
       const workerSocket = net.connect(workerPort, "localhost", () => {
         // Forward the original HTTP upgrade request to the worker
@@ -135,33 +134,33 @@ export async function startMaster() {
         const headers = Object.entries(req.headers)
           .map(([key, value]) => `${key}: ${value}`)
           .join("\r\n");
-        
+
         workerSocket.write(requestLine + headers + "\r\n\r\n");
-        
+
         // Send any buffered data (the head)
         if (head.length > 0) {
           workerSocket.write(head);
         }
-        
+
         // Pipe data between client and worker
         socket.pipe(workerSocket);
         workerSocket.pipe(socket);
       });
-      
+
       workerSocket.on("error", (err) => {
         log.error(`Failed to connect to worker ${workerIndex}:`, err);
         socket.destroy();
       });
-      
+
       socket.on("error", (err) => {
         log.error("Client socket error:", err);
         workerSocket.destroy();
       });
-      
+
       socket.on("close", () => {
         workerSocket.destroy();
       });
-      
+
       workerSocket.on("close", () => {
         socket.destroy();
       });
@@ -199,18 +198,23 @@ app.all(/^\/w(\d+)(\/.*)$/, async (req, res) => {
   const workerPort = config.workerPortByIndex(workerIndex);
 
   // Build the target URL
-  const queryString = Object.keys(req.query).length > 0 
-    ? `?${new URLSearchParams(req.query as Record<string, string>).toString()}`
-    : "";
+  const queryString =
+    Object.keys(req.query).length > 0
+      ? `?${new URLSearchParams(req.query as Record<string, string>).toString()}`
+      : "";
   const targetUrl = `http://localhost:${workerPort}${pathWithoutPrefix}${queryString}`;
 
   try {
     const fetchOptions: RequestInit = {
       method: req.method,
       headers: {
-        "Content-Type": req.headers["content-type"] || "application/json",
-        ...(req.headers[config.adminHeader()] 
-          ? { [config.adminHeader()]: req.headers[config.adminHeader()] as string } 
+        "Content-Type": req.headers["content-type"] ?? "application/json",
+        ...(req.headers[config.adminHeader()]
+          ? {
+              [config.adminHeader()]: req.headers[
+                config.adminHeader()
+              ] as string,
+            }
           : {}),
       },
     };
@@ -221,10 +225,10 @@ app.all(/^\/w(\d+)(\/.*)$/, async (req, res) => {
     }
 
     const response = await fetch(targetUrl, fetchOptions);
-    
+
     // Forward response status and headers
     res.status(response.status);
-    
+
     // Handle JSON responses
     const contentType = response.headers.get("content-type");
     if (contentType?.includes("application/json")) {

@@ -90,18 +90,18 @@ export class LobbyTeamView extends LitElement {
     return html`
       <div class="team-view__header">
         ${this.isHost
-        ? html`<div class="team-view__hint">
+          ? html`<div class="team-view__hint">
               ${translateText("host_modal.drag_hint")}
             </div>`
-        : html`<div></div>`}
+          : html`<div></div>`}
         ${this.isHost && hasManualAssignments
-        ? html`<button
+          ? html`<button
               class="team-view__reset-btn"
               @click=${() => this.onResetTeamAssignments?.()}
             >
               ${translateText("host_modal.reset_teams")}
             </button>`
-        : ""}
+          : ""}
       </div>
 
       <div class="team-view__grid">
@@ -117,23 +117,23 @@ export class LobbyTeamView extends LitElement {
   private renderFreeForAll() {
     return html`<div class="players-list">
       ${repeat(
-      this.clients,
-      (c) => c.clientID ?? c.username,
-      (client) =>
-        html`<span class="player-tag">
+        this.clients,
+        (c) => c.clientID ?? c.username,
+        (client) =>
+          html`<span class="player-tag">
             ${client.username}
             ${client.clientID === this.lobbyCreatorClientID
-            ? html`<span class="host-badge"
+              ? html`<span class="host-badge"
                   >(${translateText("host_modal.host_badge")})</span
                 >`
-            : html`<button
+              : html`<button
                   class="remove-player-btn"
                   @click=${() => this.onKickPlayer?.(client.clientID)}
                 >
                   ×
                 </button>`}
           </span>`,
-    )}
+      )}
     </div>`;
   }
 
@@ -303,22 +303,22 @@ export class LobbyTeamView extends LitElement {
 
         <div class="team-card__body">
           ${isEmpty
-        ? html`<div
+            ? html`<div
                 style="font-size: 10px; color: rgba(255,255,255,0.2); text-align: center; margin: auto;"
               >
                 Empty
               </div>`
-        : isNationsTeam
-          ? html`<div
+            : isNationsTeam
+              ? html`<div
                   style="font-size: 10px; color: rgba(255,255,255,0.3); text-align: center; margin: auto;"
                 >
                   AI Nations
                 </div>`
-          : repeat(
-            preview.players,
-            (p) => p.clientID ?? p.username,
-            (p) => this.renderPlayerChip(p, teamColor),
-          )}
+              : repeat(
+                  preview.players,
+                  (p) => p.clientID ?? p.username,
+                  (p) => this.renderPlayerChip(p, teamColor),
+                )}
         </div>
       </div>
     `;
@@ -328,7 +328,6 @@ export class LobbyTeamView extends LitElement {
     const isManuallyAssigned = player.clientID in this.manualAssignments;
     const isDragging = this.draggedClientID === player.clientID;
     const isHost = player.clientID === this.lobbyCreatorClientID;
-    const initial = player.username.charAt(0).toUpperCase();
 
     const chipClasses = [
       "player-chip",
@@ -342,35 +341,45 @@ export class LobbyTeamView extends LitElement {
       <div
         class=${chipClasses}
         draggable=${this.isHost ? "true" : "false"}
-        @dragstart=${(e: DragEvent) =>
-        this.handleDragStart(e, player.clientID)}
+        @dragstart=${(e: DragEvent) => this.handleDragStart(e, player.clientID)}
         @dragend=${() => this.handleDragEnd()}
         @touchstart=${(e: TouchEvent) =>
-        this.handleTouchStart(e, player.clientID)}
+          this.handleTouchStart(e, player.clientID)}
         @touchmove=${(e: TouchEvent) => this.handleTouchMove(e)}
         @touchend=${(e: TouchEvent) => this.handleTouchEnd(e)}
       >
         <span class="player-chip__name">${player.username}</span>
         ${isManuallyAssigned
-        ? html`<span style="font-size: 9px; opacity: 0.6;">📌</span>`
-        : ""}
+          ? html`<span style="font-size: 9px; opacity: 0.6;">📌</span>`
+          : ""}
         ${isHost
-        ? html`<span class="player-chip__badge"
+          ? html`<span class="player-chip__badge"
               >${translateText("host_modal.host_badge")}</span
             >`
-        : this.isHost
-          ? html`<button
+          : this.isHost
+            ? html`<button
                 class="player-chip__kick"
                 @click=${(e: Event) => {
-              e.stopPropagation();
-              this.onKickPlayer?.(player.clientID);
-            }}
+                  e.stopPropagation();
+                  this.onKickPlayer?.(player.clientID);
+                }}
               >
-                <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 1L7 7M7 1L1 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <svg
+                  width="8"
+                  height="8"
+                  viewBox="0 0 8 8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 1L7 7M7 1L1 7"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
                 </svg>
               </button>`
-          : ""}
+            : ""}
       </div>
     `;
   }

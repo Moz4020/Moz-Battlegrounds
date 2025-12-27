@@ -18,7 +18,7 @@
   "display": "standalone",
   "dir": "auto",
   "lang": "en",
-"name": "Moz Battlegrounds",
+  "name": "Moz Battlegrounds",
   "short_name": "MozBG",
   "start_url": "/",
   "id": "/"

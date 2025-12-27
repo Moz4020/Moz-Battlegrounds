@@ -1,8 +1,4 @@
-import {
-  GameID,
-  GameRecord,
-  PartialGameRecord,
-} from "../core/Schemas";
+import { GameID, GameRecord, PartialGameRecord } from "../core/Schemas";
 
 // Archive functionality disabled - no cloud storage configured
 

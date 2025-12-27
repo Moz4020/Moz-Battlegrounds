@@ -1,5 +1,5 @@
-import { AiAttackBehavior } from "../src/core/execution/utils/AiAttackBehavior";
 import { AttackExecution } from "../src/core/execution/AttackExecution";
+import { AiAttackBehavior } from "../src/core/execution/utils/AiAttackBehavior";
 import { Game, Player, PlayerInfo, PlayerType } from "../src/core/game/Game";
 import { PseudoRandom } from "../src/core/PseudoRandom";
 import { setup } from "./util/Setup";

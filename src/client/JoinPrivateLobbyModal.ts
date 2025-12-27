@@ -54,7 +54,19 @@ export class JoinPrivateLobbyModal extends LitElement {
             class="lobby-id-bar__action"
             title="Paste"
           >
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 32 32" height="20px" width="20px" xmlns="http://www.w3.org/2000/svg"><path d="M 15 3 C 13.742188 3 12.847656 3.890625 12.40625 5 L 5 5 L 5 28 L 13 28 L 13 30 L 27 30 L 27 14 L 25 14 L 25 5 L 17.59375 5 C 17.152344 3.890625 16.257813 3 15 3 Z M 15 5 C 15.554688 5 16 5.445313 16 6 L 16 7 L 19 7 L 19 9 L 11 9 L 11 7 L 14 7 L 14 6 C 14 5.445313 14.445313 5 15 5 Z M 7 7 L 9 7 L 9 11 L 21 11 L 21 7 L 23 7 L 23 14 L 13 14 L 13 26 L 7 26 Z M 15 16 L 25 16 L 25 28 L 15 28 Z"></path></svg>
+            <svg
+              stroke="currentColor"
+              fill="currentColor"
+              stroke-width="0"
+              viewBox="0 0 32 32"
+              height="20px"
+              width="20px"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M 15 3 C 13.742188 3 12.847656 3.890625 12.40625 5 L 5 5 L 5 28 L 13 28 L 13 30 L 27 30 L 27 14 L 25 14 L 25 5 L 17.59375 5 C 17.152344 3.890625 16.257813 3 15 3 Z M 15 5 C 15.554688 5 16 5.445313 16 6 L 16 7 L 19 7 L 19 9 L 11 9 L 11 7 L 14 7 L 14 6 C 14 5.445313 14.445313 5 15 5 Z M 7 7 L 9 7 L 9 11 L 21 11 L 21 7 L 23 7 L 23 14 L 13 14 L 13 26 L 7 26 Z M 15 16 L 25 16 L 25 28 L 15 28 Z"
+              ></path>
+            </svg>
           </button>
         </div>
 
@@ -64,30 +76,30 @@ export class JoinPrivateLobbyModal extends LitElement {
 
         <div class="options-layout">
           ${this.hasJoined && this.players.length > 0
-        ? html` <div class="options-section">
+            ? html` <div class="options-section">
                 <div class="option-title">
                   ${this.players.length}
                   ${this.players.length === 1
-            ? translateText("private_lobby.player")
-            : translateText("private_lobby.players")}
+                    ? translateText("private_lobby.player")
+                    : translateText("private_lobby.players")}
                 </div>
 
                 <div class="players-list">
                   ${this.players.map(
-              (player) => html`<span class="player-tag">${player}</span>`,
-            )}
+                    (player) => html`<span class="player-tag">${player}</span>`,
+                  )}
                 </div>
               </div>`
-        : ""}
+            : ""}
         </div>
         <div class="flex justify-center">
           ${!this.hasJoined
-        ? html` <o-button
+            ? html` <o-button
                 title=${translateText("private_lobby.join_lobby")}
                 block
                 @click=${this.joinLobby}
               ></o-button>`
-        : ""}
+            : ""}
         </div>
       </o-modal>
     `;
@@ -221,15 +233,12 @@ export class JoinPrivateLobbyModal extends LitElement {
     if (!lobbyId) return;
     const config = await getServerConfigFromClient();
 
-    fetch(
-      `/${config.workerPath(lobbyId)}/api/game/${lobbyId}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+    fetch(`/${config.workerPath(lobbyId)}/api/game/${lobbyId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
       },
-    )
+    })
       .then((response) => response.json())
       .then((data: GameInfo) => {
         this.players = data.clients?.map((p) => p.username) ?? [];

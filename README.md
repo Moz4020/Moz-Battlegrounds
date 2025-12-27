@@ -53,12 +53,12 @@ This starts both the client and server. Open http://localhost:9000 in your brows
 
 ## Scripts
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Run in development mode |
-| `npm run build-prod` | Build for production |
-| `npm test` | Run tests |
-| `npm run lint` | Check code style |
+| Script               | Description             |
+| -------------------- | ----------------------- |
+| `npm run dev`        | Run in development mode |
+| `npm run build-prod` | Build for production    |
+| `npm test`           | Run tests               |
+| `npm run lint`       | Check code style        |
 
 ## License
 

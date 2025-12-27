@@ -115,13 +115,13 @@ export class OModal extends LitElement {
               <div
                 @click=${(e: Event) => e.stopPropagation()}
                 class="c-modal__wrapper ${this.alwaysMaximized
-            ? "always-maximized"
-            : ""}"
+                  ? "always-maximized"
+                  : ""}"
               >
                 <header class="c-modal__header">
                   ${`${this.translationKey}` === ""
-            ? `${this.modalTitle}`
-            : `${translateText(this.translationKey)}`}
+                    ? `${this.modalTitle}`
+                    : `${translateText(this.translationKey)}`}
                   <div class="c-modal__close" @click=${this.close}>✕</div>
                 </header>
                 <section class="c-modal__content">

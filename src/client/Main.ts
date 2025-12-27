@@ -31,10 +31,10 @@ import "./UsernameInput";
 import { UsernameInput } from "./UsernameInput";
 import { incrementGamesPlayed } from "./Utils";
 import "./components/baseComponents/AlertModal";
+import { showAlert } from "./components/baseComponents/AlertModal";
 import "./components/baseComponents/Button";
 import "./components/baseComponents/ConfirmModal";
 import "./components/baseComponents/Modal";
-import { showAlert } from "./components/baseComponents/AlertModal";
 import "./styles.css";
 
 declare global {
@@ -416,9 +416,7 @@ class Client {
 
     // Forward to eventBus if available
     if (this.eventBus) {
-      this.eventBus.emit(
-        new SendSwapTeamIntentEvent(targetPlayer, targetTeam),
-      );
+      this.eventBus.emit(new SendSwapTeamIntentEvent(targetPlayer, targetTeam));
     }
   }
 

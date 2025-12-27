@@ -128,7 +128,7 @@ export class GameStartingModal extends LitElement {
     }
   `;
 
-render() {
+  render() {
     return html`
       <div class="overlay ${this.isVisible ? "visible" : ""}"></div>
       <div class="modal ${this.isVisible ? "visible" : ""}">

@@ -4,7 +4,6 @@ import rateLimit from "express-rate-limit";
 import http from "http";
 import ipAnonymize from "ip-anonymize";
 import path from "path";
-import { fileURLToPath } from "url";
 import { WebSocket, WebSocketServer } from "ws";
 import { z } from "zod";
 import { getServerConfigFromServer } from "../core/configuration/ConfigLoader";
@@ -49,9 +48,6 @@ export async function startWorker() {
   } else {
     log.info("Matchmaking disabled");
   }
-
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
 
   const app = express();
   const server = http.createServer(app);
@@ -358,8 +354,10 @@ export async function startWorker() {
           }
         }
 
-        const cosmeticResult = privilegeChecker
-          .isAllowed(flares ?? [], clientMsg.cosmetics ?? {});
+        const cosmeticResult = privilegeChecker.isAllowed(
+          flares ?? [],
+          clientMsg.cosmetics ?? {},
+        );
 
         if (cosmeticResult.type === "forbidden") {
           log.warn(`Forbidden: ${cosmeticResult.reason}`, {

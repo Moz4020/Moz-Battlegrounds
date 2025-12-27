@@ -8,5 +8,10 @@
     "skipLibCheck": true
   },
   "include": ["src/server/**/*", "src/core/**/*"],
-  "exclude": ["node_modules", "src/client/**/*", "src/core/worker/**/*", "tests/**/*"]
+  "exclude": [
+    "node_modules",
+    "src/client/**/*",
+    "src/core/worker/**/*",
+    "tests/**/*"
+  ]
 }

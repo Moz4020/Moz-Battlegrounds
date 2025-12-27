@@ -33,8 +33,12 @@ export class AlertModal extends LitElement {
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
 
     @keyframes slideUp {
@@ -49,12 +53,16 @@ export class AlertModal extends LitElement {
     }
 
     .modal-container {
-      background: linear-gradient(145deg, rgba(28, 28, 35, 0.9) 0%, rgba(18, 18, 22, 0.95) 100%);
+      background: linear-gradient(
+        145deg,
+        rgba(28, 28, 35, 0.9) 0%,
+        rgba(18, 18, 22, 0.95) 100%
+      );
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 24px;
-      box-shadow: 
+      box-shadow:
         0 30px 60px -12px rgba(0, 0, 0, 0.6),
         0 18px 36px -18px rgba(0, 0, 0, 0.5),
         inset 0 1px 1px rgba(255, 255, 255, 0.05);
@@ -205,9 +213,7 @@ export class AlertModal extends LitElement {
       <div class="modal-overlay" @click=${this.handleOverlayClick}>
         <div class="modal-container">
           <div class="modal-header">
-            <h3 class="modal-title">
-              ${this.getTitle()}
-            </h3>
+            <h3 class="modal-title">${this.getTitle()}</h3>
           </div>
           <div class="modal-body">${this.message}</div>
           <div class="modal-footer">

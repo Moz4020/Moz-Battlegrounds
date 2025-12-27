@@ -666,7 +666,9 @@ export class GameServer {
       this.log.info(`game not started, not archiving game`);
       return;
     }
-    this.log.info(`ending game with ${this.turnOffset + this.turns.length} turns`);
+    this.log.info(
+      `ending game with ${this.turnOffset + this.turns.length} turns`,
+    );
     try {
       if (this.allClients.size === 0) {
         this.log.info("no clients joined, not archiving game", {

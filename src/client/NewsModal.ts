@@ -92,14 +92,14 @@ export class NewsModal extends LitElement {
   render() {
     return html`
       <o-modal modal-title=${translateText("news.title")}>
-<div class="options-layout">
+        <div class="options-layout">
           <div class="options-section">
             <div class="news-container">
               <div class="news-content">
                 ${resolveMarkdown(this.markdown, {
-      includeImages: true,
-      includeCodeBlockClassNames: true,
-    })}
+                  includeImages: true,
+                  includeCodeBlockClassNames: true,
+                })}
               </div>
             </div>
           </div>

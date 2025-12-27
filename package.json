@@ -1,5 +1,5 @@
 {
-"name": "moz-battlegrounds",
+  "name": "moz-battlegrounds",
   "scripts": {
     "build-dev": "webpack --config webpack.config.js --mode development",
     "build-prod": "webpack --config webpack.config.js --mode production",
