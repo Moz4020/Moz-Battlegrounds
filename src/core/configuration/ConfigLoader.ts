@@ -45,7 +45,10 @@ export async function getServerConfigFromClient(): Promise<ServerConfig> {
   return cachedSC;
 }
 export function getServerConfigFromServer(): ServerConfig {
-  const gameEnv = process.env.GAME_ENV ?? "dev";
+  // Render.com automatically sets RENDER_EXTERNAL_HOSTNAME
+  // Use this as fallback detection if GAME_ENV isn't set
+  const isRender = process.env.RENDER_EXTERNAL_HOSTNAME !== undefined;
+  const gameEnv = process.env.GAME_ENV ?? (isRender ? "render" : "dev");
   return getServerConfig(gameEnv);
 }
 export function getServerConfig(gameEnv: string) {
